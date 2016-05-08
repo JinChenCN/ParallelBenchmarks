@@ -1,0 +1,1600 @@
+package spec.benchmarks.xml.pt.validation;//####[7]####
+//####[7]####
+import java.io.File;//####[9]####
+import java.io.IOException;//####[10]####
+import java.util.Arrays;//####[12]####
+import javax.xml.XMLConstants;//####[13]####
+import javax.xml.parsers.ParserConfigurationException;//####[14]####
+import javax.xml.transform.Source;//####[15]####
+import javax.xml.transform.stream.StreamSource;//####[16]####
+import javax.xml.validation.Schema;//####[17]####
+import javax.xml.validation.SchemaFactory;//####[18]####
+import javax.xml.validation.Validator;//####[19]####
+import org.xml.sax.SAXException;//####[21]####
+import spec.harness.Constants;//####[23]####
+import spec.harness.Context;//####[24]####
+import spec.harness.Launch;//####[25]####
+import spec.harness.Util;//####[26]####
+import spec.harness.results.BenchmarkResult;//####[27]####
+import spec.io.FileCache;//####[28]####
+import spec.io.FileCache.CachedFile;//####[29]####
+//####[29]####
+//-- ParaTask related imports//####[29]####
+import pt.runtime.*;//####[29]####
+import java.util.concurrent.ExecutionException;//####[29]####
+import java.util.concurrent.locks.*;//####[29]####
+import java.lang.reflect.*;//####[29]####
+import pt.runtime.GuiThread;//####[29]####
+import java.util.concurrent.BlockingQueue;//####[29]####
+import java.util.ArrayList;//####[29]####
+import java.util.List;//####[29]####
+//####[29]####
+public class Main extends XMLBenchmark {//####[31]####
+    static{ParaTask.init();}//####[31]####
+    /*  ParaTask helper method to access private/protected slots *///####[31]####
+    public void __pt__accessPrivateSlot(Method m, Object instance, TaskID arg, Object interResult ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {//####[31]####
+        if (m.getParameterTypes().length == 0)//####[31]####
+            m.invoke(instance);//####[31]####
+        else if ((m.getParameterTypes().length == 1))//####[31]####
+            m.invoke(instance, arg);//####[31]####
+        else //####[31]####
+            m.invoke(instance, arg, interResult);//####[31]####
+    }//####[31]####
+//####[33]####
+    private static final int XSD_NUMBER = 24;//####[33]####
+//####[34]####
+    private static FileCache.CachedFile[] allInstanceBytes;//####[34]####
+//####[35]####
+    private static FileCache.CachedFile[] allSchemaBytes;//####[35]####
+//####[36]####
+    private static Validator[][][] allValidators;//####[36]####
+//####[38]####
+    public static String testType() {//####[38]####
+        return MULTI;//####[39]####
+    }//####[40]####
+//####[41]####
+    private static String[] schemaNames = { "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd", "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd", "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd", "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd" };//####[41]####
+//####[67]####
+    private static String[] instanceNames = { "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml", "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml", "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml", "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml" };//####[67]####
+//####[103]####
+    private static int loops[] = { 1, 5, 3, 52, 647, 419, 1, 5, 3, 52, 647, 419, 1, 5, 3, 52, 647, 419, 1, 5, 3, 52, 647, 419 };//####[103]####
+//####[135]####
+    public static void setupBenchmark() {//####[135]####
+        String dirName = Util.getProperty(Constants.XML_VALIDATION_INPUT_DIR_PROP, null);//####[136]####
+        try {//####[137]####
+            allInstanceBytes = new FileCache.CachedFile[XSD_NUMBER];//####[138]####
+            FileCache cache = Context.getFileCache();//####[139]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[140]####
+            {//####[140]####
+                String name = getFullName(Main.class, dirName, instanceNames[i]);//####[141]####
+                allInstanceBytes[i] = cache.new CachedFile(name);//####[142]####
+                allInstanceBytes[i].cache();//####[143]####
+            }//####[144]####
+            allSchemaBytes = new FileCache.CachedFile[XSD_NUMBER];//####[145]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[146]####
+            {//####[146]####
+                String name = getFullName(Main.class, dirName, schemaNames[i]);//####[147]####
+                allSchemaBytes[i] = cache.new CachedFile(name);//####[148]####
+                allSchemaBytes[i].cache();//####[149]####
+            }//####[150]####
+            setupValidators(dirName);//####[152]####
+        } catch (IOException e) {//####[153]####
+            e.printStackTrace(Context.getOut());//####[154]####
+        }//####[155]####
+    }//####[156]####
+//####[158]####
+    private static void setupValidators(String dirName) {//####[158]####
+        int threads = Launch.currentNumberBmThreads;//####[159]####
+        allValidators = new Validator[threads][XSD_NUMBER][];//####[160]####
+        try {//####[161]####
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);//####[162]####
+            sf.setErrorHandler(null);//####[163]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[164]####
+            {//####[164]####
+                String xsdFilename = getFullName(Main.class, dirName, schemaNames[i]);//####[165]####
+                File tempURI = new File(xsdFilename);//####[166]####
+                Schema precompSchema;//####[167]####
+                if (tempURI.isAbsolute()) //####[168]####
+                {//####[168]####
+                    precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), tempURI.toURI().toString()));//####[169]####
+                } else {//####[171]####
+                    precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));//####[172]####
+                }//####[173]####
+                for (int j = 0; j < threads; j++) //####[174]####
+                {//####[174]####
+                    Validator[] validatorForLoops = new Validator[loops[i]];//####[175]####
+                    TaskIDGroup g;//####[176]####
+                    g = new TaskIDGroup(loops[i]);//####[177]####
+                    for (int k = 0; k < loops[i]; k++) //####[178]####
+                    {//####[178]####
+                        TaskID id = setUpvalidatorForLoops(validatorForLoops, k, precompSchema);//####[179]####
+                        g.add(id);//####[180]####
+                    }//####[182]####
+                    try {//####[183]####
+                        g.waitTillFinished();//####[184]####
+                    } catch (Exception e) {//####[185]####
+                        e.printStackTrace();//####[186]####
+                    }//####[187]####
+                    allValidators[j][i] = validatorForLoops;//####[189]####
+                }//####[190]####
+            }//####[191]####
+        } catch (SAXException e) {//####[192]####
+            e.printStackTrace();//####[193]####
+        } catch (Exception e) {//####[194]####
+            e.printStackTrace();//####[195]####
+        }//####[196]####
+    }//####[197]####
+//####[199]####
+    private static volatile Method __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method = null;//####[199]####
+    private synchronized static void __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet() {//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            try {//####[199]####
+                __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__setUpvalidatorForLoops", new Class[] {//####[199]####
+                    Validator[].class, int.class, Schema.class//####[199]####
+                });//####[199]####
+            } catch (Exception e) {//####[199]####
+                e.printStackTrace();//####[199]####
+            }//####[199]####
+        }//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(0);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(1);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(1);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(0);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, Schema precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(2);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(2);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setTaskIdArgIndexes(0, 1, 2);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(2);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, TaskID<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(2);//####[199]####
+        taskinfo.addDependsOn(precompSchema);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, int k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, int k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(0);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, int k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(1);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, TaskID<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(1);//####[199]####
+        taskinfo.addDependsOn(k);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(Validator[] validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(TaskID<Validator[]> validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setTaskIdArgIndexes(0);//####[199]####
+        taskinfo.addDependsOn(validatorForLoops);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema) {//####[199]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[199]####
+        return setUpvalidatorForLoops(validatorForLoops, k, precompSchema, new TaskInfo());//####[199]####
+    }//####[199]####
+    private static TaskID<Void> setUpvalidatorForLoops(BlockingQueue<Validator[]> validatorForLoops, BlockingQueue<Integer> k, BlockingQueue<Schema> precompSchema, TaskInfo taskinfo) {//####[199]####
+        // ensure Method variable is set//####[199]####
+        if (__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method == null) {//####[199]####
+            __pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_ensureMethodVarSet();//####[199]####
+        }//####[199]####
+        taskinfo.setQueueArgIndexes(0, 1, 2);//####[199]####
+        taskinfo.setIsPipeline(true);//####[199]####
+        taskinfo.setParameters(validatorForLoops, k, precompSchema);//####[199]####
+        taskinfo.setMethod(__pt__setUpvalidatorForLoops_ValidatorAr_int_Schema_method);//####[199]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[199]####
+    }//####[199]####
+    public static void __pt__setUpvalidatorForLoops(Validator[] validatorForLoops, int k, Schema precompSchema) {//####[199]####
+        validatorForLoops[k] = precompSchema.newValidator();//####[200]####
+    }//####[201]####
+//####[201]####
+//####[203]####
+    private Validator[][] schemaBoundValidator;//####[203]####
+//####[205]####
+    public Main(BenchmarkResult bmResult, int threadId) {//####[205]####
+        super(bmResult, threadId);//####[206]####
+        schemaBoundValidator = allValidators[threadId - 1];//####[207]####
+    }//####[208]####
+//####[210]####
+    public void harnessMain() {//####[210]####
+        try {//####[211]####
+            long start = System.currentTimeMillis();//####[212]####
+            executeWorkload();//####[213]####
+            long time = System.currentTimeMillis() - start;//####[214]####
+            System.out.println("Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");//####[215]####
+        } catch (Exception e) {//####[216]####
+            e.printStackTrace(Context.getOut());//####[217]####
+        }//####[218]####
+    }//####[219]####
+//####[221]####
+    public static void main(String[] args) throws Exception {//####[221]####
+        runSimple(Main.class, args);//####[222]####
+    }//####[223]####
+//####[225]####
+    private void executeWorkload() throws ParserConfigurationException, IOException, SAXException {//####[226]####
+        for (int i = 0; i < XSD_NUMBER; i++) //####[227]####
+        {//####[227]####
+            Context.getOut().println("Validating " + instanceNames[i]);//####[228]####
+            doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);//####[229]####
+        }//####[230]####
+    }//####[231]####
+//####[233]####
+    private void doValidationTests(int loops, FileCache.CachedFile file, Validator[] schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[235]####
+        TaskIDGroup g;//####[243]####
+        g = new TaskIDGroup(loops);//####[244]####
+        for (int i = loops - 1; i >= 0; i--) //####[245]####
+        {//####[245]####
+            TaskID id = validateSourceTask(i, file, schemaValidator[i]);//####[246]####
+            g.add(id);//####[247]####
+        }//####[248]####
+        try {//####[249]####
+            g.waitTillFinished();//####[250]####
+        } catch (Exception e) {//####[251]####
+            e.printStackTrace();//####[252]####
+        }//####[253]####
+    }//####[255]####
+//####[257]####
+    private static volatile Method __pt__validateSourceTask_int_CachedFile_Validator_method = null;//####[257]####
+    private synchronized static void __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet() {//####[257]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[257]####
+            try {//####[257]####
+                __pt__validateSourceTask_int_CachedFile_Validator_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__validateSourceTask", new Class[] {//####[257]####
+                    int.class, CachedFile.class, Validator.class//####[257]####
+                });//####[257]####
+            } catch (Exception e) {//####[257]####
+                e.printStackTrace();//####[257]####
+            }//####[257]####
+        }//####[257]####
+    }//####[257]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(0);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(1);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(1);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(0);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, Validator schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(2);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(2);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setTaskIdArgIndexes(0, 1, 2);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(2);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, TaskID<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(2);//####[259]####
+        taskinfo.addDependsOn(schemaValidator);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, CachedFile file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, CachedFile file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(0);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, CachedFile file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(1);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, TaskID<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(1);//####[259]####
+        taskinfo.addDependsOn(file);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(int loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(TaskID<Integer> loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setTaskIdArgIndexes(0);//####[259]####
+        taskinfo.addDependsOn(loop);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[259]####
+        return validateSourceTask(loop, file, schemaValidator, new TaskInfo());//####[259]####
+    }//####[259]####
+    private TaskID<Void> validateSourceTask(BlockingQueue<Integer> loop, BlockingQueue<CachedFile> file, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        // ensure Method variable is set//####[259]####
+        if (__pt__validateSourceTask_int_CachedFile_Validator_method == null) {//####[259]####
+            __pt__validateSourceTask_int_CachedFile_Validator_ensureMethodVarSet();//####[259]####
+        }//####[259]####
+        taskinfo.setQueueArgIndexes(0, 1, 2);//####[259]####
+        taskinfo.setIsPipeline(true);//####[259]####
+        taskinfo.setParameters(loop, file, schemaValidator);//####[259]####
+        taskinfo.setMethod(__pt__validateSourceTask_int_CachedFile_Validator_method);//####[259]####
+        taskinfo.setInstance(this);//####[259]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[259]####
+    }//####[259]####
+    public void __pt__validateSourceTask(int loop, CachedFile file, Validator schemaValidator) throws ParserConfigurationException, IOException, SAXException {//####[259]####
+        validateSource(loop, createDomSource(file), schemaValidator);//####[260]####
+        validateSource(loop, createSaxSource(file), schemaValidator);//####[261]####
+    }//####[262]####
+//####[262]####
+//####[268]####
+    private static volatile Method __pt__validateSource_int_Source_Validator_method = null;//####[268]####
+    private synchronized static void __pt__validateSource_int_Source_Validator_ensureMethodVarSet() {//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            try {//####[268]####
+                __pt__validateSource_int_Source_Validator_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__validateSource", new Class[] {//####[268]####
+                    int.class, Source.class, Validator.class//####[268]####
+                });//####[268]####
+            } catch (Exception e) {//####[268]####
+                e.printStackTrace();//####[268]####
+            }//####[268]####
+        }//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(0);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(1);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(1);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(0);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, Validator schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, Validator schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(2);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(2);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setTaskIdArgIndexes(0, 1, 2);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(1, 2);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(2);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(0, 2);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, TaskID<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(2);//####[268]####
+        taskinfo.addDependsOn(schemaValidator);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, Source source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, Source source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(0);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, Source source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(1);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, TaskID<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0, 2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(1);//####[268]####
+        taskinfo.addDependsOn(source);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(int loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(TaskID<Integer> loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(1, 2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setTaskIdArgIndexes(0);//####[268]####
+        taskinfo.addDependsOn(loop);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator) {//####[268]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[268]####
+        return validateSource(loop, source, schemaValidator, new TaskInfo());//####[268]####
+    }//####[268]####
+    private TaskID<Void> validateSource(BlockingQueue<Integer> loop, BlockingQueue<Source> source, BlockingQueue<Validator> schemaValidator, TaskInfo taskinfo) {//####[268]####
+        // ensure Method variable is set//####[268]####
+        if (__pt__validateSource_int_Source_Validator_method == null) {//####[268]####
+            __pt__validateSource_int_Source_Validator_ensureMethodVarSet();//####[268]####
+        }//####[268]####
+        taskinfo.setQueueArgIndexes(0, 1, 2);//####[268]####
+        taskinfo.setIsPipeline(true);//####[268]####
+        taskinfo.setParameters(loop, source, schemaValidator);//####[268]####
+        taskinfo.setMethod(__pt__validateSource_int_Source_Validator_method);//####[268]####
+        taskinfo.setInstance(this);//####[268]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[268]####
+    }//####[268]####
+    public void __pt__validateSource(int loop, Source source, Validator schemaValidator) {//####[268]####
+        schemaValidator.reset();//####[269]####
+        schemaValidator.setErrorHandler(null);//####[270]####
+        try {//####[271]####
+            synchronized (this) {//####[272]####
+                schemaValidator.validate(source);//####[273]####
+            }//####[274]####
+            if (loop == 0) //####[275]####
+            {//####[275]####
+                Context.getOut().print("\tas " + source.getClass().getName());//####[276]####
+                Context.getOut().println(" succeeded. (correct result)");//####[277]####
+            }//####[278]####
+        } catch (SAXException e) {//####[279]####
+            Context.getOut().print("\tas " + source.getClass().getName());//####[280]####
+            Context.getOut().println(" failed. (Incorrect result)" + Arrays.toString(loops));//####[281]####
+            e.printStackTrace(Context.getOut());//####[282]####
+        } catch (IOException e) {//####[283]####
+            Context.getOut().println("Unable to validate due to IOException.");//####[284]####
+        }//####[285]####
+    }//####[286]####
+//####[286]####
+}//####[286]####

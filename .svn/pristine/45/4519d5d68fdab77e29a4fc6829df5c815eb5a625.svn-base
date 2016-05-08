@@ -1,0 +1,260 @@
+package spec.benchmarks.xml.pt.validation;//####[7]####
+//####[7]####
+import java.io.File;//####[9]####
+import java.io.IOException;//####[10]####
+import java.util.concurrent.atomic.AtomicInteger;//####[11]####
+import java.util.Arrays;//####[13]####
+import java.util.HashMap;//####[14]####
+import javax.xml.XMLConstants;//####[15]####
+import javax.xml.parsers.ParserConfigurationException;//####[16]####
+import javax.xml.transform.Source;//####[17]####
+import javax.xml.transform.stream.StreamSource;//####[18]####
+import javax.xml.validation.Schema;//####[19]####
+import javax.xml.validation.SchemaFactory;//####[20]####
+import javax.xml.validation.Validator;//####[21]####
+import org.xml.sax.SAXException;//####[23]####
+import spec.harness.Constants;//####[25]####
+import spec.harness.Context;//####[26]####
+import spec.harness.Launch;//####[27]####
+import spec.harness.Util;//####[28]####
+import spec.harness.results.BenchmarkResult;//####[29]####
+import spec.io.FileCache;//####[30]####
+import spec.io.FileCache.CachedFile;//####[31]####
+import spec.benchmarks.xml.pt.XMLBenchmark;//####[33]####
+//####[33]####
+//-- ParaTask related imports//####[33]####
+import pt.runtime.*;//####[33]####
+import java.util.concurrent.ExecutionException;//####[33]####
+import java.util.concurrent.locks.*;//####[33]####
+import java.lang.reflect.*;//####[33]####
+import pt.runtime.GuiThread;//####[33]####
+import java.util.concurrent.BlockingQueue;//####[33]####
+import java.util.ArrayList;//####[33]####
+import java.util.List;//####[33]####
+//####[33]####
+public class Main extends XMLBenchmark {//####[35]####
+    static{ParaTask.init();}//####[35]####
+    /*  ParaTask helper method to access private/protected slots *///####[35]####
+    public void __pt__accessPrivateSlot(Method m, Object instance, TaskID arg, Object interResult ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {//####[35]####
+        if (m.getParameterTypes().length == 0)//####[35]####
+            m.invoke(instance);//####[35]####
+        else if ((m.getParameterTypes().length == 1))//####[35]####
+            m.invoke(instance, arg);//####[35]####
+        else //####[35]####
+            m.invoke(instance, arg, interResult);//####[35]####
+    }//####[35]####
+//####[37]####
+    private static final int XSD_NUMBER = 6;//####[37]####
+//####[38]####
+    private static FileCache.CachedFile[] allInstanceBytes;//####[38]####
+//####[39]####
+    private static FileCache.CachedFile[] allSchemaBytes;//####[39]####
+//####[40]####
+    private static Validator[][] allValidators;//####[40]####
+//####[41]####
+    private static int THREADS = 4;//####[41]####
+//####[42]####
+    private static HashMap<String, TaskID> taskIdMapping = new HashMap<String, TaskID>();//####[42]####
+//####[44]####
+    public static String testType() {//####[44]####
+        return MULTI;//####[45]####
+    }//####[46]####
+//####[47]####
+    private static String[] schemaNames = { "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd" };//####[47]####
+//####[55]####
+    private static String[] instanceNames = { "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml" };//####[55]####
+//####[73]####
+    private static int loops[] = { 1, 5, 3, 52, 647, 419 };//####[73]####
+//####[84]####
+    public static void setupBenchmark() {//####[84]####
+        String dirName = Util.getProperty(Constants.XML_VALIDATION_INPUT_DIR_PROP, null);//####[85]####
+        try {//####[86]####
+            allInstanceBytes = new FileCache.CachedFile[XSD_NUMBER];//####[87]####
+            FileCache cache = Context.getFileCache();//####[88]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[89]####
+            {//####[89]####
+                String name = getFullName(Main.class, dirName, instanceNames[i]);//####[90]####
+                allInstanceBytes[i] = cache.new CachedFile(name);//####[91]####
+                allInstanceBytes[i].cache();//####[92]####
+            }//####[93]####
+            allSchemaBytes = new FileCache.CachedFile[XSD_NUMBER];//####[94]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[95]####
+            {//####[95]####
+                String name = getFullName(Main.class, dirName, schemaNames[i]);//####[96]####
+                allSchemaBytes[i] = cache.new CachedFile(name);//####[97]####
+                allSchemaBytes[i].cache();//####[98]####
+            }//####[99]####
+            setupValidators(dirName);//####[101]####
+        } catch (IOException e) {//####[102]####
+            e.printStackTrace(Context.getOut());//####[103]####
+        }//####[104]####
+    }//####[105]####
+//####[107]####
+    private static void setupValidators(String dirName) {//####[107]####
+        int threads = THREADS;//####[109]####
+        allValidators = new Validator[threads][XSD_NUMBER];//####[110]####
+        try {//####[111]####
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);//####[112]####
+            sf.setErrorHandler(null);//####[113]####
+            for (int i = 0; i < XSD_NUMBER; i++) //####[114]####
+            {//####[114]####
+                String xsdFilename = getFullName(Main.class, dirName, schemaNames[i]);//####[115]####
+                File tempURI = new File(xsdFilename);//####[116]####
+                Schema precompSchema;//####[117]####
+                if (tempURI.isAbsolute()) //####[118]####
+                {//####[118]####
+                    precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), tempURI.toURI().toString()));//####[119]####
+                } else {//####[121]####
+                    precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));//####[122]####
+                }//####[123]####
+                for (int j = 0; j < threads; j++) //####[124]####
+                {//####[124]####
+                    allValidators[j][i] = precompSchema.newValidator();//####[125]####
+                }//####[126]####
+            }//####[127]####
+        } catch (SAXException e) {//####[128]####
+            e.printStackTrace();//####[129]####
+        } catch (Exception e) {//####[130]####
+            e.printStackTrace();//####[131]####
+        }//####[132]####
+    }//####[133]####
+//####[135]####
+    private Validator[] schemaBoundValidator;//####[135]####
+//####[137]####
+    public Main(BenchmarkResult bmResult, int threadId) {//####[137]####
+        super(bmResult, threadId);//####[138]####
+        schemaBoundValidator = allValidators[threadId - 1];//####[139]####
+    }//####[140]####
+//####[142]####
+    public void harnessMain() {//####[142]####
+        try {//####[143]####
+            long start = System.currentTimeMillis();//####[144]####
+            executeWorkload();//####[145]####
+            long time = System.currentTimeMillis() - start;//####[146]####
+            System.out.println("Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");//####[147]####
+        } catch (Exception e) {//####[148]####
+            e.printStackTrace(Context.getOut());//####[149]####
+        }//####[150]####
+    }//####[151]####
+//####[153]####
+    public static void main(String[] args) throws Exception {//####[153]####
+        runSimple(Main.class, args);//####[154]####
+    }//####[155]####
+//####[157]####
+    private void executeWorkload() throws ParserConfigurationException, IOException, SAXException {//####[158]####
+        TaskIDGroup g;//####[159]####
+        g = new TaskIDGroup(XSD_NUMBER);//####[160]####
+        for (int i = 0; i < XSD_NUMBER; i++) //####[162]####
+        {//####[162]####
+            Context.getOut().println("Validating " + instanceNames[i]);//####[163]####
+            TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i], instanceNames[i]);//####[166]####
+            taskIdMapping.put(instanceNames[i], id);//####[167]####
+            g.add(id);//####[168]####
+        }//####[169]####
+        try {//####[170]####
+            g.waitTillFinished();//####[171]####
+        } catch (Exception e) {//####[172]####
+            e.printStackTrace();//####[173]####
+        }//####[174]####
+    }//####[175]####
+//####[177]####
+    private static volatile Method __pt__doValidationTests_int_CachedFile_Validator_String_method = null;//####[177]####
+    private synchronized static void __pt__doValidationTests_int_CachedFile_Validator_String_ensureMethodVarSet() {//####[177]####
+        if (__pt__doValidationTests_int_CachedFile_Validator_String_method == null) {//####[177]####
+            try {//####[177]####
+                __pt__doValidationTests_int_CachedFile_Validator_String_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__doValidationTests", new Class[] {//####[177]####
+                    int.class, CachedFile.class, Validator.class, String.class//####[177]####
+                });//####[177]####
+            } catch (Exception e) {//####[177]####
+                e.printStackTrace();//####[177]####
+            }//####[177]####
+        }//####[177]####
+    }//####[177]####
+    private TaskID<Void> doValidationTests(Object loops, Object file, Object schemaValidator, Object instanceName) throws ParserConfigurationException, IOException, SAXException {//####[179]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[179]####
+        return doValidationTests(loops, file, schemaValidator, instanceName, new TaskInfo());//####[179]####
+    }//####[179]####
+    private TaskID<Void> doValidationTests(Object loops, Object file, Object schemaValidator, Object instanceName, TaskInfo taskinfo) throws ParserConfigurationException, IOException, SAXException {//####[179]####
+        // ensure Method variable is set//####[179]####
+        if (__pt__doValidationTests_int_CachedFile_Validator_String_method == null) {//####[179]####
+            __pt__doValidationTests_int_CachedFile_Validator_String_ensureMethodVarSet();//####[179]####
+        }//####[179]####
+        List<Integer> __pt__taskIdIndexList = new ArrayList<Integer>();//####[179]####
+        List<Integer> __pt__queueIndexList = new ArrayList<Integer>();//####[179]####
+        if (loops instanceof BlockingQueue) {//####[179]####
+            __pt__queueIndexList.add(0);//####[179]####
+        }//####[179]####
+        if (loops instanceof TaskID) {//####[179]####
+            taskinfo.addDependsOn((TaskID)loops);//####[179]####
+            __pt__taskIdIndexList.add(0);//####[179]####
+        }//####[179]####
+        if (file instanceof BlockingQueue) {//####[179]####
+            __pt__queueIndexList.add(1);//####[179]####
+        }//####[179]####
+        if (file instanceof TaskID) {//####[179]####
+            taskinfo.addDependsOn((TaskID)file);//####[179]####
+            __pt__taskIdIndexList.add(1);//####[179]####
+        }//####[179]####
+        if (schemaValidator instanceof BlockingQueue) {//####[179]####
+            __pt__queueIndexList.add(2);//####[179]####
+        }//####[179]####
+        if (schemaValidator instanceof TaskID) {//####[179]####
+            taskinfo.addDependsOn((TaskID)schemaValidator);//####[179]####
+            __pt__taskIdIndexList.add(2);//####[179]####
+        }//####[179]####
+        if (instanceName instanceof BlockingQueue) {//####[179]####
+            __pt__queueIndexList.add(3);//####[179]####
+        }//####[179]####
+        if (instanceName instanceof TaskID) {//####[179]####
+            taskinfo.addDependsOn((TaskID)instanceName);//####[179]####
+            __pt__taskIdIndexList.add(3);//####[179]####
+        }//####[179]####
+        int[] __pt__queueIndexArray = new int[__pt__queueIndexList.size()];//####[179]####
+        for (int __pt__i = 0; __pt__i < __pt__queueIndexArray.length; __pt__i++) {//####[179]####
+            __pt__queueIndexArray[__pt__i] = __pt__queueIndexList.get(__pt__i);//####[179]####
+        }//####[179]####
+        taskinfo.setQueueArgIndexes(__pt__queueIndexArray);//####[179]####
+        if (__pt__queueIndexArray.length > 0) {//####[179]####
+            taskinfo.setIsPipeline(true);//####[179]####
+        }//####[179]####
+        int[] __pt__taskIdIndexArray = new int[__pt__taskIdIndexList.size()];//####[179]####
+        for (int __pt__i = 0; __pt__i < __pt__taskIdIndexArray.length; __pt__i++) {//####[179]####
+            __pt__taskIdIndexArray[__pt__i] = __pt__taskIdIndexList.get(__pt__i);//####[179]####
+        }//####[179]####
+        taskinfo.setTaskIdArgIndexes(__pt__taskIdIndexArray);//####[179]####
+        taskinfo.setParameters(loops, file, schemaValidator, instanceName);//####[179]####
+        taskinfo.setMethod(__pt__doValidationTests_int_CachedFile_Validator_String_method);//####[179]####
+        taskinfo.setInstance(this);//####[179]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[179]####
+    }//####[179]####
+    public void __pt__doValidationTests(int loops, CachedFile file, Validator schemaValidator, String instanceName) throws ParserConfigurationException, IOException, SAXException {//####[179]####
+        for (int i = loops - 1; i >= 0; i--) //####[181]####
+        {//####[181]####
+            validateSource(i, createDomSource(file), schemaValidator, instanceName);//####[182]####
+            synchronized (this) {//####[183]####
+                validateSource(i, createSaxSource(file), schemaValidator, instanceName);//####[184]####
+            }//####[185]####
+        }//####[186]####
+    }//####[188]####
+//####[188]####
+//####[194]####
+    private void validateSource(int loop, Source source, Validator schemaValidator, String instanceName) {//####[194]####
+        schemaValidator.reset();//####[195]####
+        schemaValidator.setErrorHandler(null);//####[196]####
+        try {//####[198]####
+            schemaValidator.validate(source);//####[202]####
+            if (loop == 0) //####[204]####
+            {//####[204]####
+                Context.getOut().print("\tas " + source.getClass().getName());//####[205]####
+                Context.getOut().println(" succeeded. (correct result)");//####[206]####
+            }//####[207]####
+        } catch (SAXException e) {//####[208]####
+            Context.getOut().print("\tas " + source.getClass().getName());//####[209]####
+            Context.getOut().println(" failed. (Incorrect result)" + Arrays.toString(loops));//####[210]####
+            Context.getOut().println("--- file name is : " + instanceName + ", TaskID is : " + taskIdMapping.get(instanceName) + " on loop " + loop + " for " + source.getClass().getName() + " is throwing exception! ");//####[211]####
+            e.printStackTrace(Context.getOut());//####[213]####
+        } catch (IOException e) {//####[214]####
+            Context.getOut().println("Unable to validate due to IOException.");//####[215]####
+        }//####[216]####
+    }//####[217]####
+}//####[217]####

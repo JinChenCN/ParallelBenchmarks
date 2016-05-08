@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><projectDescription>
+	<name>BenchmarksDemo</name>
+	<comment/>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	<buildCommand><name>pjplugin.pyjamaFileBuilder</name><arguments/></buildCommand></buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	<nature>pjplugin.pyjamaFileBuilderNature</nature></natures>
+</projectDescription>
