@@ -35,8 +35,9 @@ public class Main extends XMLBenchmark {
     private static final int XSD_NUMBER = 6;
     private static FileCache.CachedFile[] allInstanceBytes;
     private static FileCache.CachedFile[] allSchemaBytes;
-    private static Validator[][] allValidators;
-    private static int THREADS = 4;
+    private static Validator[][][] allValidators;
+    private static int THREADSNUM = 6;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
 
     public static String testType() {
         return MULTI;
@@ -102,9 +103,8 @@ public class Main extends XMLBenchmark {
     }
 
     private static void setupValidators(String dirName) {
-        //int threads = Launch.currentNumberBmThreads;
-    	int threads = THREADS;
-        allValidators = new Validator[threads][XSD_NUMBER];
+        int threads = Launch.currentNumberBmThreads;
+        allValidators = new Validator[threads][XSD_NUMBER][];
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             sf.setErrorHandler(null);
@@ -118,8 +118,12 @@ public class Main extends XMLBenchmark {
                 } else {
                     precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));
                 }
-                for (int j = 0; j < threads; j++) {           
-                	allValidators[j][i] = precompSchema.newValidator();
+                for (int j = 0; j < threads; j++) {   
+                    Validator[] validatorForLoops = new Validator[THREADSNUM];
+                	for (int k=0; k<THREADSNUM; k++) {
+                		validatorForLoops[k]=precompSchema.newValidator();
+                	}
+                	allValidators[j][i] = validatorForLoops;
                 }
             }
         } catch (SAXException e) {
@@ -129,15 +133,11 @@ public class Main extends XMLBenchmark {
         }
     }
     
-    TASK private static void setUpvalidatorForLoops(Validator[] validatorForLoops, int k, Schema precompSchema) {
-    	validatorForLoops[k]=precompSchema.newValidator();
-    }
-    
-    private Validator[] schemaBoundValidator;
+    private Validator[][] schemaBoundValidator;
 
     public Main(BenchmarkResult bmResult, int threadId) {
         super(bmResult, threadId);
-        //schemaBoundValidator = allValidators[threadId - 1];
+        schemaBoundValidator = allValidators[threadId - 1];
     }
 
     public void harnessMain() {
@@ -157,104 +157,76 @@ public class Main extends XMLBenchmark {
 
     private void executeWorkload() throws
             ParserConfigurationException, IOException, SAXException {
+    	
+    	ParaTask.setScheduling(scheduleType);
+    	ParaTask.setThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF, THREADSNUM);
+    	
+    	TaskIDGroup g;
+    	g = new TaskIDGroup(XSD_NUMBER);
+
         for (int i = 0; i < XSD_NUMBER; i++) {
             Context.getOut().println("Validating " + instanceNames[i]);
-            
-        	TaskIDGroup g;
-        	g = new TaskIDGroup(THREADS);
-        	
-            for (int j = 0; j < THREADS; j ++ ) {
-            	schemaBoundValidator = allValidators[j];
-                //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
-            	TaskID id = doValidationTestsDom(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
-        		g.add(id);
+
+            //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
+        	TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
+    		g.add(id);            
+        }
+        try {
+			g.waitTillFinished();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    TASK private void doValidationTests(int loops, CachedFile file,
+            Validator[] schemaValidator) throws
+            ParserConfigurationException, IOException, SAXException {
+    	if(loops < THREADSNUM)
+    	{    
+            for (int i = loops - 1; i >= 0; i--) {
+    		validateSource(i, createDomSource(file), schemaValidator[i]);
+            validateSource(i, createSaxSource(file), schemaValidator[i]); 
             }
-            
+    	} else {
+        	TaskIDGroup g;
+        	g = new TaskIDGroup(THREADSNUM);
+        	int[] loopsForThread = new int[THREADSNUM];
+        	for(int i=0; i<THREADSNUM-1; i++)
+        	{
+        		loopsForThread[i] = loops/THREADSNUM;
+        	}
+        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+        	
+        	for (int j = 0; j < THREADSNUM; j++)
+        	{
+            	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
+            	g.add(id);
+        	}
+//            for (int i = loops/THREADSNUM; i >= 0; i--) {
+//            	TaskID id = validateSourceTask(i, file, schemaValidator[THREADSNUM-1]);
+//        		g.add(id); 
+//                //validateSource(i, createDomSource(file), schemaValidator[i]);
+//                //validateSource(i, createSaxSource(file), schemaValidator[i]);     	
+//            }            
             try {
     			g.waitTillFinished();
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
-            
-            for (int k = loops[i] - 1; k >= 0; k--) {
-                //validateSource(i, createDomSource(file), schemaValidator);
-                validateSource(k, createSaxSource(allInstanceBytes[i]), schemaBoundValidator[i]);
-            }
-            
-            
-//        	TaskIDGroup g1;
-//        	g1 = new TaskIDGroup(THREADS);
-//        	
-//            for (int j = 0; j < THREADS; j ++ ) {
-//            	schemaBoundValidator = allValidators[j];
-//                //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
-//            	TaskID id = doValidationTestsSAX(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
-//        		g1.add(id);
-//            }
-//            
-//            try {
-//    			g1.waitTillFinished();
-//    		} catch (Exception e) {
-//    			e.printStackTrace();
-//    		}
-        }
-    }
-
-    TASK private void doValidationTestsDom(int loops, CachedFile file,
-            Validator schemaValidator) throws
-            ParserConfigurationException, IOException, SAXException {
-    	
-    	//original
-        for (int i = loops - 1; i >= 0; i--) {
-            validateSource(i, createDomSource(file), schemaValidator);
-            //validateSource(i, createSaxSource(file), schemaValidator);
-        }
-   	    
-//    	TaskIDGroup g;
-//    	g = new TaskIDGroup(loops);
-//        for (int i = loops - 1; i >= 0; i--) {
-//        	TaskID id = validateSourceTask(i, file, schemaValidator);
-//    		g.add(id);
-//        }
-//        try {
-//			g.waitTillFinished();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+    	}
         
     }
     
-    TASK private void doValidationTestsSAX(int loops, CachedFile file,
-            Validator schemaValidator) throws
-            ParserConfigurationException, IOException, SAXException {
-    	
-    	//original
-        for (int i = loops - 1; i >= 0; i--) {
-            //validateSource(i, createDomSource(file), schemaValidator);
-            validateSource(i, createSaxSource(file), schemaValidator);
+    TASK private void doValidationLoop (int loop, CachedFile file, Validator schemaValidator) throws
+    ParserConfigurationException, IOException, SAXException{
+        for (int i = loop - 1; i >= 0; i--) {
+		validateSource(i, createDomSource(file), schemaValidator);
+        validateSource(i, createSaxSource(file), schemaValidator); 
         }
-   	    
-//    	TaskIDGroup g;
-//    	g = new TaskIDGroup(loops);
-//        for (int i = loops - 1; i >= 0; i--) {
-//        	TaskID id = validateSourceTask(i, file, schemaValidator[i]);
-//    		g.add(id);
-//        }
-//        try {
-//			g.waitTillFinished();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-        
+//        validateSource(loop, createDomSource(file), schemaValidator);
+//        validateSource(loop, createSaxSource(file), schemaValidator);
     }
-    
-    TASK private void validateSourceTask(int loop, CachedFile file, 
-    		Validator schemaValidator) throws
-    		ParserConfigurationException, IOException, SAXException{
-        validateSource(loop, createDomSource(file), schemaValidator);
-       // validateSource(loop, createSaxSource(file), schemaValidator);
-    }
-
+ 
     //Note: A validator object is not thread-safe and not reentrant. 
     //In other words, it is the application's responsibility 
     //to make sure that one Validator object is not used from more than one thread at any given time, 
@@ -262,14 +234,15 @@ public class Main extends XMLBenchmark {
     private void validateSource(int loop, Source source, Validator schemaValidator) {
         schemaValidator.reset();
         schemaValidator.setErrorHandler(null);
+        
         try {
-           // synchronized(this) {
+           // synchronized(this) { 
             	schemaValidator.validate(source);
            // }
-            if (loop == 0) {
-                Context.getOut().print("\tas " + source.getClass().getName());
-                Context.getOut().println(" succeeded. (correct result)");
-            }
+//            if (loop == 0) {
+//                Context.getOut().print("\tas " + source.getClass().getName());
+//                Context.getOut().println(" succeeded. (correct result)");
+//            }
         } catch (SAXException e) {
             Context.getOut().print("\tas " + source.getClass().getName());
             Context.getOut().println(" failed. (Incorrect result)" + Arrays.toString(loops));

@@ -8,7 +8,6 @@ package spec.benchmarks.xml.pt.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.util.Arrays;
 import javax.xml.XMLConstants;
@@ -36,7 +35,9 @@ public class Main extends XMLBenchmark {
     private static final int XSD_NUMBER = 6;
     private static FileCache.CachedFile[] allInstanceBytes;
     private static FileCache.CachedFile[] allSchemaBytes;
-    private static Validator[][] allValidators;
+    private static Validator[][][] allValidators;
+    private static int THREADSNUM = 6;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
 
     public static String testType() {
         return MULTI;
@@ -103,7 +104,7 @@ public class Main extends XMLBenchmark {
 
     private static void setupValidators(String dirName) {
         int threads = Launch.currentNumberBmThreads;
-        allValidators = new Validator[threads][XSD_NUMBER];
+        allValidators = new Validator[threads][XSD_NUMBER][];
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             sf.setErrorHandler(null);
@@ -117,8 +118,12 @@ public class Main extends XMLBenchmark {
                 } else {
                     precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));
                 }
-                for (int j = 0; j < threads; j++) {           
-                	allValidators[j][i] = precompSchema.newValidator();
+                for (int j = 0; j < threads; j++) {   
+                    Validator[] validatorForLoops = new Validator[THREADSNUM];
+                	for (int k=0; k<THREADSNUM; k++) {
+                		validatorForLoops[k]=precompSchema.newValidator();
+                	}
+                	allValidators[j][i] = validatorForLoops;
                 }
             }
         } catch (SAXException e) {
@@ -128,7 +133,7 @@ public class Main extends XMLBenchmark {
         }
     }
     
-    private Validator[] schemaBoundValidator;
+    private Validator[][] schemaBoundValidator;
 
     public Main(BenchmarkResult bmResult, int threadId) {
         super(bmResult, threadId);
@@ -153,8 +158,8 @@ public class Main extends XMLBenchmark {
     private void executeWorkload() throws
             ParserConfigurationException, IOException, SAXException {
     	
-    	ParaTask.setScheduling(ParaTask.ScheduleType.MixedSchedule);
-    	ParaTask.setThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF, 4);
+    	ParaTask.setScheduling(scheduleType);
+    	ParaTask.setThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF, THREADSNUM);
     	
     	TaskIDGroup g;
     	g = new TaskIDGroup(XSD_NUMBER);
@@ -174,16 +179,54 @@ public class Main extends XMLBenchmark {
     }
 
     TASK private void doValidationTests(int loops, CachedFile file,
-            Validator schemaValidator) throws
+            Validator[] schemaValidator) throws
             ParserConfigurationException, IOException, SAXException {
-    	
-        for (int i = loops - 1; i >= 0; i--) {
-            validateSource(i, createDomSource(file), schemaValidator);
-            validateSource(i, createSaxSource(file), schemaValidator);
-        }
+    	if(loops < THREADSNUM)
+    	{    
+            for (int i = loops - 1; i >= 0; i--) {
+    		validateSource(i, createDomSource(file), schemaValidator[i]);
+            validateSource(i, createSaxSource(file), schemaValidator[i]); 
+            }
+    	} else {
+        	TaskIDGroup g;
+        	g = new TaskIDGroup(THREADSNUM);
+        	int[] loopsForThread = new int[THREADSNUM];
+        	for(int i=0; i<THREADSNUM-1; i++)
+        	{
+        		loopsForThread[i] = loops/THREADSNUM;
+        	}
+        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+        	
+        	for (int j = 0; j < THREADSNUM; j++)
+        	{
+            	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
+            	g.add(id);
+        	}
+//            for (int i = loops/THREADSNUM; i >= 0; i--) {
+//            	TaskID id = validateSourceTask(i, file, schemaValidator[THREADSNUM-1]);
+//        		g.add(id); 
+//                //validateSource(i, createDomSource(file), schemaValidator[i]);
+//                //validateSource(i, createSaxSource(file), schemaValidator[i]);     	
+//            }            
+            try {
+    			g.waitTillFinished();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
         
     }
-
+    
+    TASK private void doValidationLoop (int loop, CachedFile file, Validator schemaValidator) throws
+    ParserConfigurationException, IOException, SAXException{
+        for (int i = loop - 1; i >= 0; i--) {
+		validateSource(i, createDomSource(file), schemaValidator);
+        validateSource(i, createSaxSource(file), schemaValidator); 
+        }
+//        validateSource(loop, createDomSource(file), schemaValidator);
+//        validateSource(loop, createSaxSource(file), schemaValidator);
+    }
+ 
     //Note: A validator object is not thread-safe and not reentrant. 
     //In other words, it is the application's responsibility 
     //to make sure that one Validator object is not used from more than one thread at any given time, 
@@ -196,10 +239,10 @@ public class Main extends XMLBenchmark {
            // synchronized(this) { 
             	schemaValidator.validate(source);
            // }
-            if (loop == 0) {
-                Context.getOut().print("\tas " + source.getClass().getName());
-                Context.getOut().println(" succeeded. (correct result)");
-            }
+//            if (loop == 0) {
+//                Context.getOut().print("\tas " + source.getClass().getName());
+//                Context.getOut().println(" succeeded. (correct result)");
+//            }
         } catch (SAXException e) {
             Context.getOut().print("\tas " + source.getClass().getName());
             Context.getOut().println(" failed. (Incorrect result)" + Arrays.toString(loops));

@@ -281,20 +281,20 @@ public class Main extends XMLBenchmark {
     		transformerForEach[i] = transformer;
     	}
         for (int j = loops - 1; j >= 0; j--) {
-            transform(transformerForEach[j], createSaxSource(xmlInput), propertyNamePrefix + "SAX", j);
-            transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j);
-            transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j);
+            transform(transformerForEach[j], createSaxSource(xmlInput), propertyNamePrefix + j + "SAX", j);
+            //transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j);
+            //transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j);
         }
     }
     
     private void transform(Transformer transformer, Source source, String descr, int loop) throws
             TransformerException, ParserConfigurationException, SAXException, IOException {
         transformer.reset();
-        synchronized(this) {
+       // synchronized(this) {
         outputStream.setCurrentProp(descr);
         transformer.transform(source, streamResult);
         outputStream.checkResult(loop);
-        }
+       // }
 
     }
 }

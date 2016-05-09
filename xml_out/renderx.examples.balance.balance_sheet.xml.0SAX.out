@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8"?><fo:root xmlns:rx="http://www.renderx.com/XSL/Extensions" xmlns:fo="http://www.w3.org/1999/XSL/Format"><fo:layout-master-set><fo:simple-page-master master-name="order" page-width="420mm" page-height="297mm"><fo:region-body margin="10mm"/><fo:region-before extent="10mm"/><fo:region-after extent="10mm"/></fo:simple-page-master></fo:layout-master-set><fo:page-sequence master-reference="order"><fo:static-content flow-name="xsl-region-before"><fo:block text-align="center" font-size="10pt" padding-top="3mm">
+                        This document represents an English version of the balance sheet applied in the Republic of Armenia
+                    </fo:block></fo:static-content><fo:flow flow-name="xsl-region-body"><fo:block font-size="10pt" font-family="NewtonAm"><fo:table><fo:table-column column-width="170mm"/><fo:table-column column-width="5mm"/><fo:table-column column-width="170mm"/><fo:table-body><fo:table-row><fo:table-cell><fo:block><fo:table><fo:table-column column-width="97mm"/><fo:table-column column-width="10mm"/><fo:table-column column-width="30mm"/><fo:table-column column-width="33mm"/><fo:table-body><fo:table-row><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">Assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">Line</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">By the end of the previous year</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">By the end of the reported year (period)</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>1</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>2</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>3</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>4</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row><fo:table-cell border="1pt solid black"><fo:block text-align="center">I. Non current assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Fixed assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">010</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">8427</fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Incomplete non current tangible assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">020</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Intangible assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">030</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Investments by share participation method</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">040</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other non current financial assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">050</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Delayed tax assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">060</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other non current assets (specify)</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">070</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell bord<html><head><META http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Extensible Markup Language (XML) 1.0</title><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC"><style type="text/css">code { font-family: monospace }</style></head><body>
+<div class="head"><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/WWW/w3c_home" alt="W3C"></a><h1>Extensible Markup Language (XML) 1.0<br></h1><h2>W3C Recommendation   </h2><dl><dt>This version:</dt><er="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">071</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">072</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">073</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">074</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Total non current assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">080</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">8427</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row height="7mm"><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row><fo:table-cell border="1pt solid black"><fo:block text-align="center">II. Current assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Materials</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">090</fo:block></fo:table-cell><fo:tabledd>
+<a href="http://www.w3.org/TR/1998/REC-xml-">
+http://www.w3.org/TR/1998/REC-xml-</a><br>
+<a href="http://www.w3.org/TR/1998/REC-xml-.xml">
+http://www.w3.o-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Animals being raised and fattened</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">100</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center">rg/TR/1998/REC-xml-.xml</a><br>
+<a href="http://www.w3.org/TR/1998/REC-xml-.html">
+http://www.w3.org/TR/1998/REC-xml-.html</a><br>
+<a href="http://www.w3.org/TR/1998/REC-xml-.pdf">
+http://www.w3.org/TR/1998/REC-xml-.pdf</a><br>
+<a href="http://www.w3.org/TR/1998/REC-xml-.ps">
+http://www.w3.org/TR/1998/REC-xml-.ps</a><br>
+</dd><dt>Latest version:</dt><dd>
+<a href="http://www.w3.org/TR/REC-xml">
+http://www.w3.org/TR/REC-xml</a><br>
+</dd><dt>Previous version:</dt><dd>
+<a href="http://www.w3.org/TR/PR-xml-971208">
+http://www.w3.org/TR/PR-xml-971208</a><br>
+
+</dd><dt>Editors:</dt><dd>
+Tim Bray
+ (Textuality and Netscape) 
+<a href="mailto:tbray@textuality.com">&lt;tbray@textuality.com&gt;</a><br>
+Jean Paoli
+ (Microsoft) 
+<a href="mailto:jeanpa@microsoft.com">&lt;jeanpa@microsoft.com&gt;</a><br>
+C. M. Sperberg-McQueen
+ (University of Illinois at Chicago) 
+<a href="mailto:cmsmcq@uic.edu">&lt;cmsmcq@uic.edu&gt;</a><br>
+</dd></dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">
+		Copyright</a> &nbsp;&copy;&nbsp; 1999 <a href="http://www.w3.org">W3C</a>
+		(<a href="http://www.lcs.mit.edu">MIT</a>,
+		<a href="http://www.inria.fr/">INRIA</a>,
+		<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C
+		<a href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal_Disclaimer">liability</a>,
+		<a href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C_Trademarks">trademark</a>,
+		<a href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document use</a> and
+		<a href="http://www.w3.org/Consortium/Legal/copyright-software.html">software licensing</a> rules apply.
+	</p><hr title="Separator for header"></div><h2><a name="abstract">Abstract</a></h2>
+<p>The Extensible Markup Language (XML) is a subset of
+SGML that is completely described in this document. Its goal is to
+enable generic SGML to be served, received, and processed on the Web
+in the way that is now possible with HTML. XML has been designed for
+ease of implementation and for interoperability with both SGML and
+HTML.</p>
+<h2><a name="status">Status of this document</a></h2>
+<p>This document has been reviewed by W3C Members and
+other interested parties and has been endorsed by the
+Director as a W3C Recommendation. It is a stable
+document and may be used as reference material or cited
+as a normative reference from another document. W3C's
+role in making the Recommendation is to draw attention
+to the specification and to promote its widespread
+deployment. This enhances the functionality and
+interoperability of the Web.</p>
+<p>
+This document specifies a syntax created by subsetting an existing,
+widely used international text processing standard (Standard
+Generalized Markup Language, ISO 8879:1986(E) as amended and
+corrected) for use on the World Wide Web.  It is a product of the W3C
+XML Activity, details of which can be found at <a href="http://www.w3.org/XML">http://www.w3.org/XML</a>.  A list of
+current W3C Recommendations and other technical documents can be found
+at <a href="http://www.w3.org/TR">http://www.w3.org/TR</a>.
+</p>
+<p>This specification uses the term URI, which is defined by <a href="#Berners-Lee">[]</a>, a work in progress expected to update <a href="#RFC1738">[]</a> and <a href="#RFC1808">[]</a>. 
+</p>
+<p>The list of known errors in this specification is 
+available at 
+<a href="http://www.w3.org/XML/xml-19980210-errata">http://www.w3.org/XML/xml-19980210-errata</a>.</p>
+<p>Please report errors in this document to 
+<a href="mailto:xml-editor@w3.org">xml-editor@w3.org</a>.
+</p>
+
+<h2><a name="contents">Table of contents</a></h2>1 <a href="#sec-intro">Introduction</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#sec-origin-goals">Origin and Goals</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#sec-terminology">Terminology</a><br>2 <a href="#sec-documents">Documents</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#sec-well-formed">Well-Formed XML Documents</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.2 <a href="#charsets">Characters</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.3 <a href="#sec-common-syn">Common Syntactic Constructs</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.4 <a href="#syntax">Character Data and Markup</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.5 <a href="#sec-comments">Comments</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.6 <a href="#sec-pi">Processing Instructions</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.7 <a href="#sec-cdata-sect">CDATA Sections</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.8 <a href="#sec-prolog-dtd">Prolog and Document Type Declaration</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.9 <a href="#sec-rmd">Standalone Document Declaration</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.10 <a href="#sec-white-space">White Space Handling</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.11 <a href="#sec-line-ends">End-of-Line Handling</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.12 <a href="#sec-lang-tag">Language Identification</a><br>3 <a href="#sec-logical-struct">Logical Structures</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.1 <a href="#sec-starttags">Start-Tags, End-Tags, and Empty-Element Tags</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.2 <a href="#elemdecls">Element Type Declarations</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 <a href="#sec-element-content">Element Content</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2 <a href="#sec-mixed-content">Mixed Content</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.3 <a href="#attdecls">Attribute-List Declarations</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1 <a href="#sec-attribute-types">Attribute Types</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2 <a href="#sec-attr-defaults">Attribute Defaults</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3 <a href="#AVNormalize">Attribute-Value Normalization</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.4 <a href="#sec-condition-sect">Conditional Sections</a><br>4 <a href="#sec-physical-struct">Physical Structures</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.1 <a href="#sec-references">Character and Entity References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.2 <a href="#sec-entity-decl">Entity Declarations</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.1 <a href="#sec-internal-ent">Internal Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2 <a href="#sec-external-ent">External Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.3 <a href="#TextEntities">Parsed Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.1 <a href="#sec-TextDecl">The Text Declaration</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.2 <a href="#wf-entities">Well-Formed Parsed Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&<fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-life items</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">110</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Unfinished production</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">120</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">25738</fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Production</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">130</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Products</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center"nbsp;4.3.3 <a href="#charencoding">Character Encoding in Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.4 <a href="#entproc">XML Processor Treatment of Entities and References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.1 <a href="#not-recognized">Not Recognized</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.2 <a href="#included">Included</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.3 <a href="#include-if-valid">Included If Validating</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.4 <a href="#forbidden">Forbidden</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.5 <a href="#inliteral">Included in Literal</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.6 <a href="#notify">Notify</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.7 <a href="#bypass">Bypassed</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.8 <a href="#as-PE">Included as PE</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.5 <a href="#intern-replacement">Construction of Internal Entity Replacement Text</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.6 <a href="#sec-predefined-ent">Predefined Entities</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.7 <a href="#Notations">Notation Declarations</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.8 <a href="#sec-doc-entity">Document Entity</a><br>5 <a href="#sec-conformance">Conformance</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.1 <a href="#proc-types">Validating and Non-Validating Processors</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.2 <a href="#safe-behavior">Using XML Processors</a><br>6 <a href="#sec-notation">Notation</a><br><h3>Appendices</h3>A <a href="#sec-bibliography">References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;A.1 <a href="#sec-existing-stds">Normative References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;A.2 <a href="#section-Other-References">Other References</a><br>B <a href="#CharClasses">Character Classes</a><br>C <a href="#sec-xml-and-sgml">XML and SGML</a> (Non-Normative)<br>D <a href="#sec-entexpand">Expansion of Entity and Character References</a> (Non-Normative)<br>E <a href="#determinism">Deterministic Content Models</a> (Non-Normative)<br>F <a href="#sec-guessing">Autodetection of Character Encodings</a> (Non-Normative)<br>G <a href="#sec-xml-wg">W3C XML Working Group</a> (Non-Normative)<br><hr> 
+
+<h2><a name="sec-intro"></a>1 Introduction</h2>
+<p>Extensible Markup Language, abbreviated XML, describes a class of
+data objects called <a href="#dt-xml-doc">XML documents</a> and
+partially describes the behavior of 
+computer programs which process them. XML is an application profile or
+restricted form of SGML, the Standard Generalized Markup 
+Language <a href="#ISO8879">[]</a>.
+By construction, XML documents 
+are conforming SGML documents.
+</p>
+<p>XML documents are made up of storage units called <a href="#dt-entity">entities</a>, which contain either parsed
+or unparsed data.
+Parsed data is made up of <a href="#dt-character">characters</a>,
+some 
+of which form <a href="#dt-chardata">character data</a>, 
+and some of which form <a href="#dt-markup">markup</a>.
+Markup encodes a description of the document's storage layout and
+logical structure. XML provides a mechanism to impose constraints on
+the storage layout and logical structure.</p>
+<p><a name="dt-xml-proc"></a>A software module
+called an <b>XML processor</b> is used to read XML documents
+and provide access to their content and structure. <a name="dt-app"></a>It is assumed that an XML processor is
+doing its work on behalf of another module, called the
+<b>application</b>. This specification describes the
+required behavior of an XML processor in terms of how it must read XML
+data and the information it must provide to the application.</p>
+ 
+
+<h3><a name="sec-origin-goals"></a>1.1 Origin and Goals</h3>
+<p>XML was developed by an XML Working Group (originally known as the
+SGML Editorial Review Board) formed under the auspices of the World
+Wide>140</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-r Web Consortium (W3C) in 1996.
+It was chaired by Jon Bosak of Sun
+Microsystems with the active participation of an XML Special
+Interest Group (previously known as the SGML Working Group) also
+organized by the W3C. The membership of the XML Working Group is given
+in an appendix. Dan Connolly served as the WG's contact with the W3C.
+</p>
+<p>The design goals for XML are:<ol>
+<li><p>XML shall be straightforwardly usable over the
+Internet.</p></li>
+<li><p>XML shall support a wide varietight="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Current prepayments</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">150</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Account payable by sales</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">160</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-term accounts payable to budget</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">170</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">1180</fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other accounts payable</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" y of applications.</p></li>
+<li><p>XML shall be compatible with SGML.</p></li>
+<li><p>It shall be easy to write programs which process XML
+documents.</p></li>
+<li><p>The number of optional features in XML is to be kept to the
+absolute minimum, ideally zero.</p></li>
+<li><p>XML documents should be human-legible and reasonably
+clear.</p></li>
+<li><p>The XML design should be prepared quickly.</p></li>
+<li><p>The design of XML shall be formal and concise.</p></li>
+<li><p>XML documents shall be easy to create.</p></li>
+<li><p>Terseness in XML markup is of minimal importance.</p></li></ol>
+</p>
+<p>This specification, 
+together with associated standards
+(Unicode and ISO/IEC 10646 for characters,
+Internet RFC 1766 for language identification tags, 
+ISO 639 for language name codes, and 
+ISO 3166 for country name codes),
+provides all the information necessary to understand 
+XML Version and construct computer programs to process it.</p>
+<p>This version of the XML specification
+
+.</p>
+
+
+ 
+
+
+ 
+
+<h3><a name="sec-terminology"></a>1.2 Terminology</h3>
+ 
+<p>The terminology used to describe XML documents is defined in the body of
+this specification.
+The terms defined in the following list are used in building those
+definitions and in describing the actions of an XML processor:
+<dl>
+
+<dt><b>may</b></dt>
+<dd><p><a name="dt-may"></a>Conforming documents and XML
+processors are permitted to but need not behave as
+described.</p></dd>
+
+
+<dt><b>must</b></dt>
+<dd><p>Conforming documents and XML processors 
+are required to behave as described; otherwise they are in error.
+
+</p></dd>
+
+
+<dt><b>error</b></dt>
+<dd><p><a name="dt-error"></a>A violation of the rules of this
+specification; results are
+undefined.  Conforming software may detect and report an error and may
+recover from it.</p></dd>
+
+
+<dt><b>fatal error</b></dt>
+<dd><p><a name="dt-fatal"></a>An error
+which a conforming <a href="#dt-xml-proc">XML processor</a>
+must detect and report to the application.
+After encountering a fatal error, the
+processor may continue
+processing the data to search for further errors and may report such
+errors to the application.  In order to support correction of errors,
+the processor may make unprocessed data from the document (with
+intermingled character data and markup) available to the application.
+Once a fatal error is detected, however, the processor must not
+continue normal processing (i.e., it must not
+continue to pass character data and information about the document's
+logical structure to the application in the normal way).
+</p></dd>
+
+
+<dt><b>at user option</b></dt>
+<dd><p>Conforming software may or must (depending on the modal verb in the
+sentencdisplay-align="center"><fo:bloce) behave as described; if it does, it must
+provide users a means to enable or disable the behavior
+described.</p></dd>
+
+
+<dt><b>validity constraint</b></dt>
+<dd><p>A rule which applies to all 
+<a href="#dt-valid">valid</a> XML documents.
+Violations of validity constraints are errors; they must, at user option, 
+be reported by 
+<a href="#dt-validating">validating XML processors</a>.</p></dd>
+
+
+<dt><b>well-formedness constraint</b></dt>
+<dd><p>A rule which applies to all <a href="#dt-wellformed">well-formed</a> XML documents.
+Violations of well-formedness constraints are 
+<a href="#dt-fatal">fatal errors</a>.</p></dd>
+
+
+
+<dt><b>match</b></dt>
+<dd><p><a name="dt-match"></a>(Of strings or names:) 
+Two strings or names being compared must be identical.
+Characters with multiple possible representations in ISO/IEC 10646 (e.g.
+characters with 
+both precomposed and base+diacritic forms) match only if they have the
+same representation in both strings.
+At user option, processors may normalize such characters to
+some canonical form.
+No case folding is performed. 
+(Of strings and rules in the grammar:)  
+A string matches a grammatical production if it belongs to the
+language generated by that production.
+(Of content and content models:)
+An element matches its declaration when it conforms
+in the fashion described in the constraint
+<a href="#elementvalid">[<b></b>]</a>.
+
+</p></dd>
+
+
+<dt><b>for compatibility</b></dt>
+<dd><p><a name="dt-compat"></a>A feature of
+XML included solely to ensure that XML remains compatible with SGML.
+</p></dd>
+
+
+<dt><b>for interoperability</b></dt>
+<dd><p><a name="dt-interop"></a>A
+non-binding recommendation included to increase the chances that XML
+documents can be processed by the existing installed base of SGML
+processors which predate the
+.</p></dd>
+
+</dl>
+</p>
+
+
+ 
+
+
+ 
+
+<h2><a name="sec-documents"></a>2 Documents</h2>
+ 
+<p><a name="dt-xml-doc"></a>
+A data object is an
+<b>XML document</b> if it is
+<a href="#dt-wellformed">well-formed</a>, as
+defined in this specification.
+k text-align="center">180</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Current financial investments</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">190</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Cash assets and equivalents</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">200</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">2971</fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:blocA well-formed XML document may in addition be
+<a href="#dt-valid">valid</a> if it meets certain further 
+constraints.</p>
+ 
+<p>Each XML document has both a logical and a physical structure.
+Physically, the documenk margin-left="1mm">Other current assets (specify)</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">210</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="rit is composed of units called <a href="#dt-entity">entities</a>.  An entity may <a href="#dt-entref">refer</a> to other entities to cause their
+inclusion in the document. A document begins in a "root"  or <a href="#dt-docent">document entity</a>.
+Logically, the document is composed of declarations, elements, 
+comments,
+character references, and
+processing
+instructions, all of which are indicated in the document by explicit
+markup.
+The logical and physical structures must nest properly, as described  
+in <a href="#wf-entities">[<b></b>]</a>.
+</p>
+ 
+
+<h3><a name="sec-well-formed"></a>2.1 Well-Formed XML Documents</h3>
+ 
+<p><a name="dt-wellformed"></a>
+A textual object is 
+a well-foght"/></fo:trmed XML document if:
+<ol>
+<li><p>Taken as a whole, it
+matches the production labeled <a href="#NT-document">document</a>.</p></li>
+<li><p>It
+meets all the well-formedness constraints given in this specification.</p>
+</li>
+<li><p>Each of the <a href="#dt-parsedent">parsed entities</a> 
+which is referenced directly or indirectly within the document is
+<a href="#wf-entities">well-formed</a>.</p></li>
+</ol></p>
+<p>
+<h5>Document</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-document"></a>[1]&nbsp;&nbsp;&nbsp;</td><td>document</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-prolog">prolog</a> 
+<a href="#NT-element">element</a> 
+<a href="#NT-Misc">Misc</a>*</td><td></td></tr></tbody></table>
+</p>
+<p>Matching the <a href="#NT-document">document</a> production 
+implies that:
+<ol>
+<li><p>It contains one or more
+<a href="#dt-element">elements</a>.</p>
+</li>
+
+<li><p><a name="dt-root"></a>There is  exactly
+one element, called the <b>root</b>, or document element,  no
+part of which appears in the <a href="#dt-content">content</a> of any other element.
+For all other elements, if the start-tag is inable-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">211</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">212</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="7.827586206896552mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Total current assets</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">220</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">29889</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row height="7mm"><fo:table-cell border="1pt solid black" backgro the content of anotheund-color="rgr
+element, the end-tag is in the contentb(20 0, 200, 200)"><foof the: same element.  More
+simply stated, the elements, delimited by start- and end-tags, nest
+properly within eabch other.
+</p></lock> </fo:block></fli>
+</ol>
+</po:ta>
+<p><ble-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)a name="dt-parentchild"></a>As a consequence 
+of this,
+for each non-root element
+<code>C</code> in the document, there is one other element <code>P</code>
+in the document such that" 
+<code><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1>C</code> is in the content of <code>P</code>, but is not in
+the content of anpt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fy oto:her element thattable-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo is in the content of
+<code>P</code>.  
+<code>P</code> is referred to as the
+<b>parent</b> of <:block> </fo:blcode>C</code>, and <code>C</code> as a
+<b>child</b> of <code>P</code>.</p>
+ 
+
+<h3><a name="charsets"></a>2.2 Characters</h3>
+oc 
+<p><a name="dt-tek></xt">fo:table-cell></fo:table-row>
+            
+                <fo:table-row height="7.82758620689655</a>A parsed ent2mity contains
+<b>tm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm" text-align="center">TOTAL</fo:block></fo:table-cell><fo:table-cell ext</b>, a sequence of 
+<a href="#dt-character">characters</a>, 
+which may represent markup or character data. 
+<a border="1pt solid black" display-align="center"><fo:block text-align="center">230</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" displayname="dt-character"></a>A <b>charac-align="center"><fo:block ttext-align="right" margin-rier</b> 
+is an atomic unit of text as specified by
+ISO/IEC 10646 <a href="#ISO10646">[]</a>.
+Legal characters are tab, carriage return, line feed, and the legal
+graphic characters of Unicode and ISO/IEC 10646.
+The use of "compatibility characters", as defined in section 6.8
+of <a href="#Unicode">[]</a>, is discouraged.
+ 
+<h5>Character Range</h5><table class="scrap"><tbody>
+<tr valign="baseline"><td><a name="NT-Char"></a>[2]&nbsp;&nbsp;&nbsp;</td><td>Char</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>#x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] 
+| [#x10000-#x10FFFF]</td><td>/*any Unicode character, excluding the
+surrogate blocks, FFFE, and FFFF.*/</td></tr>
+</tbody></table>
+</p>
+
+<p>The mechanism for encoding character code points into bit patterns may
+vary from entity to entity. All XML processors must accept the UTF-8
+and UTF-16 encodings of 10646; the mechanisms for signaling which of
+the two is in use, or for bringing other encodings into play, are
+discussed later, in <a href="#charencoding">[<b></b>]</a>.
+</p>
+
+
+ 
+
+<h3><a name="sec-common-syn"></a>2.3 Common Syntactic Constructs</h3>
+ 
+<p>This section defines some symbols used widely in the grammar.</p>
+<p><a href="#NT-S">S</a> (white space) consists of one or more space (#x20)
+characters, carriage returns, line feeds, or tabs.
+
+<h5>White Space</h5><table class="scrap"><tbody>
+<tr valign="baseline"><td><a name="NT-S"></a>[3]&nbsp;&nbsp;&nbsp;</td><td>S</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>(#x20 | #x9 | #xD | #xA)+</td><td></td></tr>
+</tbody></table></p>
+<p>Characters are classified for convenience as letters, digits, or other
+characters.  Letters consist of an alphabght="1mm" font-weight="bold">38316</fo:block></fo:table-cell></fo:table-row>
+            
+        </fo:table-body></fo:table></fo:block></fo:table-cell><fo:table-cell/><fo:table-cell><fo:block><fo:table><fo:table-column column-width="97mm"/><fo:table-column coetic or syllabic 
+base character possibly
+followed by one or more combining characters, or of an ideographic
+character.  
+Full definitions of the specific characters in each class
+are given in <a href="#CharClasses">[<b></b>]</a>.</p>
+<p><a name="dt-name"></a>A <b>Name</b> is a token
+beginning with a letter or one of a few punctuation characters, and continuing
+with letters, digits, hyphens, underscores, colons, or full stops, together
+known as name characters.
+Names beginning with the string "<code>xml</code>", or any string
+which would match <code>(('X'|'x') ('M'|'m') ('L'|'l'))</code>, are
+reserved for standardization in this or future versions of this
+specification.
+</p>
+<blockquote><b>NOTE: </b>
+The colon character within XML names is reserved for experimentation with
+name spaces.  
+Its meaning is expected to be
+standardized at some future point, at which point those documents 
+using the colon for experimental purposes may need to be updated.
+(There is no guarantee that any name-space mechanism
+adopted for XML will in fact use the colon as a name-space delimiter.)
+In practice, this means that authors should not use the colon in XML
+names except as part of name-space experimelumn-width="10mm"/><fo:table-column column-width="30mm"/><fo:table-column column-width="33mm"/><fo:table-body><fo:table-row><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">Liabilities and shareholders’ equity</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">Line</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block font-size="11pt">By the end of the previous year</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" pnts, but that XML padding="1mm"><fo:block font-size="11pt">By the end of the reported year (period)</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>1</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>2</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>3</fo:block>rocessors
+should accept the colon as a name character.
+</blockquote>
+<p>An
+<a href="#NT-Nmtoken">Nmtoken</a> (name token) is any mixture of
+name characters.
+<h5>Names and Tokens</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-NameChar"></a>[4]&nbsp;&nbsp;&nbsp;</td><td>NameChar</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-Letter">Letter</a> 
+| <a href="#NT-Digit">Digit</a> 
+| '.' | '-' | '_' | ':'
+| <a href="#NT-CombiningChar">CombiningChar</a> 
+| <a href="#NT-Extender">Extender</a></td><td></td></t</fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)" display-align="center" text-align="center" padding="1mm"><fo:block>4</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row><fo:table-cell border="1pt solid black"><fo:block text-align="center">III. Private capital</fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Net charter capital</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">240</fo:block></fo:table-cell><fo:table-cell bordr><tr valign="baer="1pt solid black" display-align="censeline"><td><ter"><fo:block texta name="NT-Name"></a>[5]&nbsp;&nbsp;&nbsp;</td><td>Name</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</t-align="rd>i<td>(<a href="#NT-Letter">Letter</a> | '_' | ':')
+(<a href="#NT-NameChar">NameChaght"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">5000</fo:block></fo:table-r</a>)*</td><td></td></tr><tr valign="baseline"><td><a name="NT-Names"></a>[6]&nbsp;&nbsp;&nbsp;</td><td>Names</td><td>&nbscell></fo:table-row>
+             p;&nbsp;&nbs  p;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-Name">Name</a> 
+(<a href="#NT-S">S</a> <a href="#NT-Name">Name</a>)*</td><td></td></tr><tr valign="baseline"><td><a name="NT-Nmtoken"></a>[7]&nbsp;&nbsp;&nbsp;</td><td>Nmtoken</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>(<a href="#NT-NameChar">NameChar</a>)+</td><td></td></tr><tr valign="baseline"><td><a name="NT-Nmtokens"></a>[8]&nbsp;&nbsp;&nbsp;</td><td>Nmtokens</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-Nmtoken">Nmtoken</a> (<a href="#NT-S">S</a> <a href="#NT-Nmtoken">Nmtoken</a>)*</td><td></td></tr></tbody></tabl <fo:tae>
+</p>
+<p>Literal data is any quoted string not containing
+the quotation mark used as a delimiter for that string.
+Literals are used
+for specifying the content of internal entities
+(<a href="#NT-EntityValue">EntityValue</a>),
+the values of attributes (<a href="#NT-AttValue">AttValue</a>), 
+and external identifiers 
+(<a href="#NT-SystemLiteral">SystemLiteral</a>).  
+Note that a <a href="#NT-SystemLiteral">SystemLiteral</a>
+can be parsed without scanning for markup.
+<h5>Literals</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-EntityValue"></a>[9]&nbsp;&nbsp;&nbsp;</td><td>EntityValue</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'"' 
+([^%&amp;"] 
+| <a href="#NT-PEReference">PEReference</a> 
+| <a href="#NT-Reference">Reference</a>)*
+'"' 
+</td><td></td></tr><tr valign="baseline"><td></td><td></td><td></td><td>| 
+"'" 
+([^%&amp;'] 
+| <a href="#NT-PEReference">PEReference</a> 
+| <a href="#NT-Reference">Reference</a>)* 
+"'"</td><td></td></tr><tr valign="baseline"><td><a name="NT-AttValue"></a>[10]&nbsp;&nbsp;&nbsp;</td><td>AttValue</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'"' 
+([^&lt;&amp;"] 
+| <a href="#NT-Reference">Reference</a>)* 
+'"' 
+</td><td></td></tr><tr valign="baseline"><td></td><td></td><td></td><td>| 
+"'" 
+([^&lt;&amp;'] 
+| <a href="#NT-Reference">Reference</a>)* 
+"'"</td><td></td></tr><tr valign="baseline"><td><a name="NT-SystemLiteral"></a>[11]&nbsp;&nbsp;&nbsp;</td><td>SystemLiteral</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>('"' [^"]* '"') |("'" [^']* "'")
+</td><td></td></tr><tr valign="baseline"><td><a name="NT-PubidLiteral"></a>[12]&nbsp;&nbsp;&nbsp;</td><td>PubidLiteral</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'"' <a href="#NT-PubidChar">ble-roPubidChar</a>* 
+'"' 
+| "'" (<a href="#NT-PubidChar">PubidChar</a> - "'")* "'"</td><td></td></tr><tr valign="baseline"><td><a name="NT-PubidChar"></a>[13]&nbsp;&nbsp;&nbsp;</td><td>PubidChar</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>#x20 | #xD | #xA 
+|[a-zA-Z0-9]
+|[-'()+,./:=?;!*#@$_%]</td><td></td></tr></tbody></table>
+</p>
+
+
+
+
+<h3><a name="syntax"></a>2.4 Character Data and Markup</h3>
+ 
+<p><a href="#dt-text">Text</a> consists of intermingled 
+<a href="#dt-chardata">character
+data</a> and markup.
+<a name="dt-markup"></a><b>Markup</b> takes the form of
+<a href="#dt-stag">start-tags</a>,
+<a href="#dt-etag">end-tags</a>,
+<a href="#dt-empty">empty-element tags</a>,
+<a href="#dt-entref">entity references</a>,
+<a href="#dt-charref">character references</a>,
+<a href="#dt-comment">comments</a>,
+<a href="#dt-cdsection">CDATA section</a> delimiters,
+<a href="#dt-doctype">document type declarations</a>, and
+<a href="#dt-pi">processing instructions</a>.
+
+</p>
+<p><a name="dt-chardata"></a>All text that is not markup
+constitutes the <b>character data</b> of
+the document.</p>
+<p>The ampersand character (&amp;) and the left angle bracket (&lt;)
+may appear in their literal form <i>only</i> when used as markup
+delimiters, or within a <a href="#dt-comment">comment</a>, a
+<a href="#dt-pi">processing instruction</a>, 
+or a <a href="#dt-cdsection">CDATA section</a>.  
+
+They are also legal within the <a href="#dt-litentval">literal entity
+value</a> w height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Emission income</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">250</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block mof an internal entity declaration; see
+<a href="#wf-entities">[<b></b>]</a>.
+
+If they are needed elsewhere,
+they must be <a href="#dt-escape">escaped</a>
+using either <a href="#dt-charref">numeric character references</a>
+or the strings
+"<code>&amp;amp;</code>" and "<code>&amp;lt;</code>" respectively. 
+The right angle
+bracket (&gt;) may be represented using the string
+"<code>&amp;gt;</code>", and must, <a href="#dt-compat">for
+compatibility</a>, 
+be escaped using
+"<code>&amp;gt;</code>" or a character reference 
+when it appears in the string
+"<code>]]&gt;</code>"
+in content, 
+when that string is not marking the end of 
+a <a href="#dt-cdsection">CDATA section</a>. 
+</p>
+<p>
+In the content of elements, character data 
+is any string of characters which does
+not contain the start-delimiter of any markup.  
+In a CDATA section, character data
+is any string of characters not including the CDATA-section-close
+delimiter, "<code>]]&gt;</code>".</p>
+<p>
+To allow attribute values to contain both single and double quotes, the
+apostrophe or single-quote character (') may be represented as
+"<code>&amp;apos;</code>", and the double-quote character (") as
+"<code>&amp;quot;</code>".
+<h5>Character Data</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-CharData"></a>[14]&nbsp;&nbsp;&nbsp;</td><td>CharData</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>[^&lt;&amp;]* - ([^&lt;&amp;]* ']]&gt;' [^&lt;&amp;]*)</td><td></td></tr></tbody></table>
+</p>
+
+ 
+
+<h3><a name="sec-comments"></a>2.5 Comments</h3>
+ 
+<p><a name="dt-comment"></a><b>Comments</b> may 
+appear anywhere in a document outside other 
+<a href="#dt-markup">markup</a>; in addition,
+they may appear within the document type declaration
+at places allowed by the grammar.
+They are not part of the document's <a href="#dt-chardata">character
+data</a>; an XML
+processor may, but need not, make it possible for an application to
+retrieve the text of comments.
+<a href="#dt-compat">For compatibility</a>, the string
+"<code>--</code>" (double-hyphen) must not occur within
+comments.
+<h5>Comments</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-Comment"></a>[15]&nbsp;&nbsp;&nbsp;</td><td>Comment</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'&lt;!--'
+((<a href="#NT-Char">Char</a> - '-') 
+| ('-' (<a href="#NT-Char">Char</a> - '-')))* 
+'--&gt;'</td><td></td></tr></tbody></table>
+</p>
+<p>An example of a commentargin-left="1mm">Difference from reassessment and recalculation</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">260</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell>:</fo:table-
+<pre>&lt;!declararow>
+                <fo:table-row height="6.75mm"><fo:table-cell bordtions for &lt;head&gt; &amp; &lt;body&gt; &gt;</pre>
+</p>
+
+ 
+
+<h3><a name="sec-pi"></a>2.6 Processing Instructions</h3>
+ 
+<p><a name="dt-pi"></a><b>Processing
+instructions</b> (PIs) allow documents to contain instructions
+for applications.
+ 
+<h5>Processing Instructions</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-PI"></a>[16]&nbsp;&nbsp;&nbsp;</td><td>PI</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'&lt;?er="1pt solid black" display-align="center"><fo:block margin-left="1mm">Accumulated profit</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">270</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Reserves</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">280</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other private capital</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="ce'nter">290</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block t <ext-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block marga href="#NT-PITarget">PITarget</a> 
+(<a href="#NT-S">S</a> 
+(<a href="#NT-Char">Char</a>* - 
+(<a href="#NT-Char">Char</a>* <a href="#NT-Char">Char</a>*))in-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">291</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:blo)?
+</td><td></td></tr><tr valign="baseline"><td><a name="NT-PITarget"></a>[17]&nbsp;&nbsp;&nbsp;</td><td>PITarget</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-Name">Name</a> - 
+(('X' | 'x') ('M' | 'm') ('L' | 'l'))</td><td></td></tr></tbody></table>
+PIs are not part of the document's <a href="#dt-chardata">character
+data</a>, but must be passed through to the application. The
+PI begins with a target (<a href="#NT-PITarget">PITarget</a>) used
+to identify the application to which the instruction is directed.  
+The target names "<code>XML</code>", "<code>xml</code>", and so on are
+reserved for standardization in this or future versions of this
+specification.
+The 
+XML <a href="#dt-notation">Notation</a> mechanism
+may be used for
+formal declaration of PI targets.
+</p>
+
+ 
+
+<h3><a name="sec-cdata-sect"></a>2.7 CDATA Sections</h3>
+ 
+<p><a name="dt-cdsection"></a><b>CDATA sections</b>
+may occur 
+anywhere character data may occur; they are
+used to escape blocks of text containing characters which would
+otherwise be recognized as markup.  CDATA sections begin with the
+string "<code>&lt;![CDATA[</code>" and end with the string
+"<code>]]&gt;</code>":
+<h5>CDATA Sections</h5><table class="scrap"><tbody><tr valign="baseline"><td><a name="NT-CDSect"></a>[18]&nbsp;&nbsp;&nbsp;</td><td>CDSect</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-CDStart">CDStart</a> 
+<a href="#NT-CData">CData</a> 
+<a href="#NT-CDEnd">CDEnd</a></td><td></td></tr><tr valign="baseline"><td><a name="NT-CDStart"></a>[19]&nbsp;&nbsp;&nbsp;</td><td>CDStart</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'&lt;![CDATA['</td><td></td></tr><tr valign="baseline"><td><a name="NT-CData"></a>[20]&nbsp;&nbsp;&nbsp;</td><td>CData</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>(<a href="#NT-Char">Char</a>* - 
+(<a href="#NT-Char">Char</a>* ']]&gt;' <a href="#NT-Char">Char</a>*))
+</td><td></td></tr><tr valign="baseline"><td><a name="NT-CDEnd"></a>[21]&nbsp;&nbsp;&nbsp;</td><td>CDEnd</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>']]&gt;'</td><td></td></tr></tbody></table>
+
+Within a CDATA section, only the <a href="#NT-CDEnd">CDEnd</a> string is
+recognized as markup, so that left angle brackets and ampersands may occur in
+their literal form; they need not (and cannot) be escaped using
+"<code>&amp;lt;</code>" and "<code>&amp;amp;</code>".  CDATA sections
+cannot nest.
+</p>
+
+<p>An example of a CDATA section, in which "<code>&lt;greeting&gt;</code>" and 
+"<code>&lt;/greeting&gt;</code>"
+are recognized as <a href="#dt-chardata">character data</a>, not
+<a href="#dt-markup">markup</a>:
+<pre>&lt;![CDATA[&lt;greeting&gt;Hello, world!&lt;/greeting&gt;]]&gt;</pre>
+</p>
+
+ 
+
+<h3><a name="sec-prolog-dtd"></a>2.8 Prolog and Document Type Declaration</h3ck margin-left="1mm">Total private cap>
+ 
+<pital</fo:block></fo:tabl><a name="dt-xmldecl"></a>XML documents 
+may, and should, 
+begin with an <b>XML declaration</b> which specifies
+the version of
+XML being used.
+For example, the following is a complete XML document, <a href="#dt-wellformed">well-formed</a> but not
+<a href="#dt-valid">valid</a>:
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;greeting&gt;Hello, world!&lt;/greeting&gt;
+</pre>
+and so is this:
+<pre>&lt;greeting&gt;Hello, world!&lt;/greeting&gt;
+</pre>
+</p>
+
+<p>The version number "<code>1.0</code>" should be used to indicate
+conformance to this version of this specification; it is an error
+for a document to use the value "<code>1.0</code>" 
+if it does not conform to this version of this specification.
+It is the intent
+of the XML working group to give later versions of this specification
+numbers other than "<code>1.0</code>", but this intent does not
+indicate a
+commitment to produce any future versions of XML, nor if any are produced, to
+use any particular numbering scheme.
+Since future versions are not ruled out, this construct is provided 
+as a means to allow the possibility of automatic version recognition, should
+it become necessary.
+Processors may signal an error if they receive documents labeled with 
+versions they do not support. 
+</p>
+<p>The function of the markup in an XML document is to describe its
+storage and logical structure and to associate attribute-value pairs
+with its logical structures.  XML provides a mechanism, the <a href="#dt-doctype">document type declaration</a>, to define
+constraints on the logical structure and to support the use of
+predefined storage units.
+
+<a name="dt-valid"></a>An XML document is 
+<b>valid</b> if it has an associated document type
+declaration and if the document
+complies with the constraints expressed in it.</p>
+<p>The document type declaration must appear before
+the first <a href="#dt-element">element</a> in the document.
+<h5>Prolog</h5><table class="scrap"><tbody>
+<tr valign="baseline"><td><a name="NT-prolog"></a>[22]&nbsp;&nbsp;&nbsp;</td><td>prolog</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-XMLDecl">XMLDecl</a>? 
+<a href="#NT-Misc">Misc</a>* 
+(<a href="#NT-doctypedecl">doctypedecl</a> 
+<a href="#NT-Misc">Misc</a>*)?</td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-XMLDecl"></a>[23]&nbsp;&nbsp;&nbsp;</td><td>XMLDecl</td><td>&nbsp;&nbsp;e-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">300</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">5000</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row height="7mm"><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row><fo:table-cell border="1pt solid black"><fo:block text-align="center">IV. Non current liabilities</fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Long term bank credits and loans</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">310</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt sol&id black" dnisplaybsp;::=&nbsp;&nbsp;&nbsp;</td><td> 
+<a-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table href="#NT-VersionInfo">VersionInfo</a> 
+<a href="#NT-EncodingDecl">EncodingDecl</a>? 
+<a href="#NT-SDDecl">SDDecl</a>? 
+<a href="#NT-S">S</a>? 
+</td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-VersionInfo"></a>[24]&nbsp;&nbsp;&nbsp;</td><td>VersionInfo</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-S">S</a> 'version' <a href="#NT-Eq">Eq</a> 
+(' <a href="#NT-VersionNum">VersionNum</a> ' 
+| " <a href="#NT-VersionNum">VersionNum</a> ")</td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-Eq"></a>[25]&nbsp;&nbsp;&nbsp;</td><td>Eq</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-S">S</a>? '=' <a href="#NT-S">S</a>?</td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-VersionNum"></a>[26]&nbsp;&nbsp;&nbsp;</td><td>VersionNum</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>([a-zA-Z0-9_.:] | '-')+</td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-Misc"></a>[27]&nbsp;&nbsp;&nbsp;</td><td>Misc</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-Comment">Comment</a> | <a href="#NT-PI">PI</a> | 
+<a href="-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Delayed tax liab#NT-S">S</a></td><td></td></tr>
+</tbody></table></p>
+
+<p><ialities name="dt-doctype"></a>The X</fo:block></fML
+<b>document type declaration</b> 
+contains or points to 
+<a href="#dt-markupdecl">markup declarations</a> 
+that provide a grammar for a
+class of documents.  
+This grammar is known as a document type definition,
+or <b>DTD</b>.  
+The document type declaration can point to an external subset (a
+special kind of 
+<a href="#dt-extent">external entity</a>) containing markup
+declarations, or can 
+contain the markup declarations directly in an internal subset, or can do
+both.   
+The DTD for a document consists of both subsets taken
+together.
+</p>
+<p><a name="dt-markupdecl"></a>
+A <b>markup declaration</b> is 
+an <a href="#dt-eldecl">element type declaration</a>, 
+an <a href="#dt-attdecl">attribute-list declaration</a>, 
+an <a href="#dt-entdecl">entity declaration</a>, or
+a <a href="#dt-notdecl">notation declaration</a>.
+
+These declarations may be contained in whole or in part
+within <a href="#dt-PE">parameter entities</a>,
+as described in the well-formedness and validity constraints below.
+For fuller information, see
+<a href="#sec-physical-struct">[<b></b>]</a>.</p>
+<h5>Document Type Definition</h5><table class="scrap"><tbody>
+<tr o:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">320</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Asset-related grants</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">330</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Non current reserves</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">340</fo:block></fo:table-cell><fo:table-cell border="1pvt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other non current liabilities (specify)</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">350</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">351</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Total non current liabilities</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">360</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">0</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row height="7mm"><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row><fo:table-cell border="1pt solid black"><fo:block text-align="center">V. Current liabilities</fo:block></fo:table-cell><fo:table-cell border="1palign="baseline"><td><a name="NT-doctypedecl"></a>[28]&nbsp;&nbsp;&nbsp;</td><td>doctypedecl</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>'&lt;!DOCTYPE' <a href="#NT-S">S</a> 
+<a href="#NT-Name">Name</a> (<a href="#NT-S">S</a> 
+<a href="#NT-ExternalID">ExternalID</a>)? 
+<a href="#NT-S">S</a>? ('[' 
+(<a href="#NT-markupdecl">markupdecl</a> 
+| <a href="#NT-PEReference">PEReference</a> 
+| <a href="#NT-S">S</a>)*
+']' 
+<a href="#NT-S">S</a>?)? '&gt;'</td><td>[&nbsp;VC:&nbsp;<a href="#vc-roottype"></a>&nbsp;]</td></tr>
+<tr valign="baseline"><td><a name="NT-markupdecl"></a>[29]&nbsp;&nbsp;&nbsp;</td><td>markupdecl</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-elementdecl">elementdecl</a> 
+| <a href="#NT-AttlistDecl">AttlistDecl</a> 
+| <a href="#NT-EntityDecl">EntityDecl</a> 
+| <a href="#NT-NotationDecl">NotationDecl</a> 
+| <a href="#NT-t solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-term bank credits</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="PI">PI</a> 
+| <a href="#NT-Comment">Comment</a>
+</td><td>[&nbsp;VC:&nbsp;<a href="#vc-PEinMarkupDecl"></a>&nbsp;]</td></tr><tr valign="baseline"><td></td><td></td><td></td><td></td><td>[&nbsp;WFC:&nbsp;<a href="#wfc-PEinInternalSubset"></a>&nbsp;]</td></tr>
+
+</tbody></table>
+
+<p>The markup declarations may be made up in whole or in partcenter">370</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"> o<fo:block tf
+the e<a href="#xt-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black"dt-repltext">replacement text</a> of 
+<a href="#dt-PE"> display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.7p5mm"arameter entities</a>.
+The productions later ><fo:table-cell border="1pt solid black" display-align="center"><fo:in this specification bflockor
+individua marginl nonterminals (<a href="#NT-elementdecl">elementdecl</a>,
+<a href="#NT-A-ttlileft="1mm">Short-term loans</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">380</fo:block></fo:table-cell><fo:tasble-cell bordetrDe="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-acl">AttlistDecl</a>, and so on) describe 
+the declarations lign<=i"center>"><foafter</i:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row> all>
+                <fo:table-row height=" t6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Credit debts by purchase</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">390</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Acquired current prepays</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">400</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm">33316</fo:block></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-term debts payable to budget</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">410</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-term debts to obligatory social insurance</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">420</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" displayhe parameter entities have-align="center"><fo:block margin-left="1mm">Debts to wages, employees and other short-term payables</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">430</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Short-term debts to participants (founders)</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">440</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other debts</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">450</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Grants by income</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">460</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-a been 
+<a href="#dt-include">included</a>.</p>
+
+<a name="vc-roottype"></a><p><b>Validity Constraint: Root Elelment Typeign="center"><fo:block text-align="right"/></fo:table-cell><fo</b></p>
+Root Element Type
+<p>
+The <a href="#NT-Name">Name</a> in the document type declaration must
+match the element type of the <a href="#dt-root">root element</a>.
+</p>
+
+
+<a name="vc-PEinMarkupDecl"></a><p><b>Validity Constraint: Proper Declaration/PE Nesting</b></p>
+Proper Declaration/PE Nesting
+<p>Parameter-entity 
+<a href="#dt-repltext">replacement text</a> must be properly nested
+with markup declarations. 
+That is to say, if either the first character
+or the last character of a markup
+declaration (<a href="#NT-markupdecl">markupdecl</a> above)
+is contained in the replacement text for a 
+<a href="#dt-PERef">parameter-entity reference</a>,
+both must be contained in the same replacement text.</p>
+
+<a name="wfc-PEinInternalSubset"></a><p><b>Well Formedness Constraint: PEs in Internal Subset</b></p>
+PEs in Internal Subset
+<p>In the internal DTD subset, 
+<a href="#dt-PERef">parameter-entity references</a>
+can occur only where markup declarations can occur, not
+within markup declarations.  (This does not apply to
+references that occur in
+external parameter entities or to the external subset.)
+</p>
+
+<p>
+Like the internal subset, the external subset and 
+any external parameter entities referred to in the DTD 
+must consist of a series of complete markup declarations of the types 
+allowed by the non-terminal symbol
+<a href="#NT-markupdecl">markupdecl</a>, interspersed with white space
+or <a href="#dt-PERef">parameter-entity references</a>.
+However, portions of the contents
+of the 
+external subset or of external parameter entities may conditionally be ignored
+by using 
+the <a href="#dt-cond-section">conditional section</a>
+construct; this is not allowed in the internal subset.
+
+<h5>External Subset</h5><table class="scrap"><tbody>
+<tr valign="baseline"><td><a name="NT-extSubset"></a>[30]&nbsp;&nbsp;&nbsp;</td><td>extSubset</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td><a href="#NT-TextDecl">TextDecl</a>?
+<a href="#NT-extSubsetDecl">extSubsetDecl</a></td><td></td></tr>
+<tr valign="baseline"><td><a name="NT-extSubsetDecl"></a>[31]&nbsp;&nbsp;&nbsp;</td><td>extSubsetDecl</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>(
+<a href="#NT-markupdecl">markupdecl</a> 
+| <a href="#NT-conditionalSect">conditionalSect</a> 
+| <a href="#NT-PEReference">PEReference</a> 
+| <a href="#NT-S">S</a>
+)*</td><td></td></tr>
+</tbody></table></p>
+<p>The external subset and external parameter entit:taies also differ 
+from the internal subset in that in them,
+<a href="#dt-PERef">parameter-entity references</a>
+are permitted <i>within</i> markup declarations,
+not only <i>between</i> markup declarations.</p>
+<p>An example of an XML document with a document type declaration:
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE greeting SYSTEM "hello.dtd"&gt;
+&lt;greeting&gt;Hello, world!&lt;/greeting&gt;
+</pre>
+The <a href="#dt-sysid">system identifier</a> 
+"<code>hello.dtd</code>" gives the URI of a DTD for the document.</p>
+<p>The declarations can also be given locally, as in this 
+example:
+<pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE greeting [
+  &lt;!ELEMENT greeting (#PCDATA)&gt;
+]&gt;
+&lt;greeting&gt;Hello, world!&lt;/greeting&gt;
+</pre>
+If both the external and internal subsets are used, the 
+internal subset is considered to occur before the external subset.
+
+This has the effect that entity and attribute-list declarations in the
+internal subset take ble-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Current reserves</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">470</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Other current liabilities (specify)</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">480</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">481</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-ceprecedence over those in the external subset.
+</p>
+
+ 
+
+<h3><a name="sec-rmd"></a>2.9 Standalone Document Declaration</h3>
+<p>Markup declarations can affect the content of the document,
+as passed from an <a href="#dt-xml-proc">XML processor</a> 
+to an application; examples are attribute defaults and entity
+declarations.
+The standalone document declaration,
+which may appear as a component of the XML declaration, signals
+whether or not there are such declarations which appear external to 
+the <a href="#dt-docent">document entity</a>.
+<h5>Standalone Document Declaration</h5><table class="scrap"><tbody>
+<tr valign="baseline"><td><a name="NT-SDDecl"></a>[32]&nbsp;&nbsp;&nbsp;</td><td>SDDecl</td><td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td><td>
+<a href="#NT-S">S</a> 
+'standalone' <a href="#NT-Eq">Eq</a> 
+(("'" ('yes' | 'll><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">482</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margino') "n-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" dis'") | ('"' ('yes' | 'no') '"'))
+</td><td>[&nbsp;VC:&nbsp;<a hrplay-align="center"><fo:block margin-left="1mme"f="#/></fo:table-cell><fo:tabvc-check-rmd"></a>&nbsp;]</td></tr>
+</tbody></le-cell border="1pt solid black" display-align="center"><fo:block text-align="center">483</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm"/></fo:table-cell></fo:table-row>
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm">Total current liabilities</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">490</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">33316</fo:block></fo:table-cell></fo:table-row>
+            <fo:table-row height="7mm"><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell><fo:table-cell border="1pt solid black" background-color="rgb(200, 200, 200)"><fo:block> </fo:block></fo:table-cell></fo:table-row>
+            
+                <fo:table-row height="6.75mm"><fo:table-cell border="1pt solid black" display-align="center"><fo:block margin-left="1mm" text-align="center">TOTAL</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="center">500</fo:block></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right"/></fo:table-cell><fo:table-cell border="1pt solid black" display-align="center"><fo:block text-align="right" margin-right="1mm" font-weight="bold">38316</fo:block></fo:table-cell></fo:table-row>
+            
+        </fo:table-body></fo:table></fo:block></fo:table-cell></fo:table-row></fo:table-body></fo:table></fo:block></fo:flow></fo:page-sequence></fo:root>t
