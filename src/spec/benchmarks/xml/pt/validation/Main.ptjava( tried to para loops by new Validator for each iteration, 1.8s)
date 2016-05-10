@@ -159,7 +159,7 @@ public class Main extends XMLBenchmark {
             long start = System.currentTimeMillis();
             executeWorkload();
             long time = System.currentTimeMillis() - start;
-            System.out.println("Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");
+            System.out.println("PT Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");
         } catch (Exception e) {
             e.printStackTrace(Context.getOut());
         }
@@ -230,10 +230,10 @@ public class Main extends XMLBenchmark {
            // synchronized(this) { 
             	schemaValidator.validate(source);
            // }
-            if (loop == 0) {
-                Context.getOut().print("\tas " + source.getClass().getName());
-                Context.getOut().println(" succeeded. (correct result)");
-            }
+//            if (loop == 0) {
+//                Context.getOut().print("\tas " + source.getClass().getName());
+//                Context.getOut().println(" succeeded. (correct result)");
+//            }
         } catch (SAXException e) {
             Context.getOut().print("\tas " + source.getClass().getName());
             Context.getOut().println(" failed. (Incorrect result)" + Arrays.toString(loops));

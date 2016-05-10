@@ -145,7 +145,7 @@ public class Main extends XMLBenchmark {
             long start = System.currentTimeMillis();
             executeWorkload();
             long time = System.currentTimeMillis() - start;
-            System.out.println("Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");
+            System.out.println("PT Parallel xml validation has taken  " + (time / 1000.0) + " seconds.");
         } catch (Exception e) {
             e.printStackTrace(Context.getOut());
         }

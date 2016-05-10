@@ -1,0 +1,327 @@
+package spec.benchmarks.xml.pt.transform;//####[7]####
+//####[7]####
+import java.io.File;//####[9]####
+import java.io.FileInputStream;//####[10]####
+import java.io.IOException;//####[11]####
+import javax.xml.parsers.ParserConfigurationException;//####[13]####
+import javax.xml.transform.Source;//####[14]####
+import javax.xml.transform.Templates;//####[15]####
+import javax.xml.transform.Transformer;//####[16]####
+import javax.xml.transform.TransformerConfigurationException;//####[17]####
+import javax.xml.transform.TransformerException;//####[18]####
+import javax.xml.transform.TransformerFactory;//####[19]####
+import javax.xml.transform.stream.StreamResult;//####[20]####
+import org.xml.sax.SAXException;//####[21]####
+import spec.benchmarks.xml.pt.XMLBenchmark;//####[23]####
+import spec.harness.Constants;//####[24]####
+import spec.harness.Context;//####[25]####
+import spec.harness.Launch;//####[26]####
+import spec.harness.Util;//####[27]####
+import spec.harness.results.BenchmarkResult;//####[28]####
+import spec.io.FileCache;//####[29]####
+import java.util.Properties;//####[30]####
+import spec.io.FileCache.CachedFile;//####[31]####
+//####[31]####
+//-- ParaTask related imports//####[31]####
+import pt.runtime.*;//####[31]####
+import java.util.concurrent.ExecutionException;//####[31]####
+import java.util.concurrent.locks.*;//####[31]####
+import java.lang.reflect.*;//####[31]####
+import pt.runtime.GuiThread;//####[31]####
+import java.util.concurrent.BlockingQueue;//####[31]####
+import java.util.ArrayList;//####[31]####
+import java.util.List;//####[31]####
+//####[31]####
+public class Main extends XMLBenchmark {//####[34]####
+    static{ParaTask.init();}//####[34]####
+    /*  ParaTask helper method to access private/protected slots *///####[34]####
+    public void __pt__accessPrivateSlot(Method m, Object instance, TaskID arg, Object interResult ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {//####[34]####
+        if (m.getParameterTypes().length == 0)//####[34]####
+            m.invoke(instance);//####[34]####
+        else if ((m.getParameterTypes().length == 1))//####[34]####
+            m.invoke(instance, arg);//####[34]####
+        else //####[34]####
+            m.invoke(instance, arg, interResult);//####[34]####
+    }//####[34]####
+//####[35]####
+    private static final int LONG_VALIDATION_MODE = 0;//####[35]####
+//####[36]####
+    private static final int SHORT_VALIDATION_MODE = 1;//####[36]####
+//####[37]####
+    private static final int SINGLE_LOOP_MODE = 0;//####[37]####
+//####[38]####
+    private static final int MULTIPLE_LOOP_MODE = 1;//####[38]####
+//####[39]####
+    private static final int INPUT_PAIR = 10;//####[39]####
+//####[40]####
+    private static final String CONTROL_FILE_NAME = "transformations.properties";//####[40]####
+//####[41]####
+    static String OUT_DIR = "xml_out";//####[41]####
+//####[43]####
+    private static final String[] XML_NAMES = { "chess-fo/Kasparov-Karpov.xml", "jenitennison/index.xml", "jenitennison/text.xml", "nitf/nitf-fishing.xml", "shared/REC-xml-19980210.xml", "recipes/recipes.xml", "dsd/article.xml", "renderx/chess/Kasparov-Karpov.xml", "renderx/examples/balance/balance_sheet.xml", "renderx/examples/meeting/meeting_minutes.xml" };//####[43]####
+//####[56]####
+    private static final String[] XSL_NAMES = { "chess-fo/chess.xsl", "jenitennison/page.xsl", "jenitennison/markup.xsl", "nitf/nitf-stylized.xsl", "spec-html/xmlspec.xsl", "recipes/recipes.xsl", "dsd/article2html.xsl", "renderx/chess/chess.xsl", "renderx/examples/balance/balance_sheet.xsl", "renderx/examples/meeting/meeting_minutes.xsl" };//####[56]####
+//####[87]####
+    private static final int[] loops = { 2, 18, 31, 34, 1, 10, 12, 3, 11, 23 };//####[87]####
+//####[100]####
+    private static FileCache.CachedFile[] xmlInput;//####[100]####
+//####[101]####
+    private static FileCache.CachedFile[] xslInput;//####[101]####
+//####[102]####
+    private static int validationMode = LONG_VALIDATION_MODE;//####[102]####
+//####[103]####
+    private static int loopMode = SINGLE_LOOP_MODE;//####[103]####
+//####[104]####
+    private static Properties longValidationProperties;//####[104]####
+//####[105]####
+    private static Properties[] shortValidationProperties;//####[105]####
+//####[106]####
+    private static String validationFileName;//####[106]####
+//####[107]####
+    private static Transformer[][] allTransformers;//####[107]####
+//####[109]####
+    private static void setValidationMode(int mode) {//####[109]####
+        validationMode = mode;//####[110]####
+    }//####[111]####
+//####[113]####
+    private static int getValidationMode() {//####[113]####
+        return validationMode;//####[114]####
+    }//####[115]####
+//####[117]####
+    private static void setLoopMode(int mode) {//####[117]####
+        loopMode = mode;//####[118]####
+    }//####[119]####
+//####[121]####
+    private static int getLoopMode() {//####[121]####
+        return loopMode;//####[122]####
+    }//####[123]####
+//####[125]####
+    public static String testType() {//####[125]####
+        return MULTI;//####[126]####
+    }//####[127]####
+//####[129]####
+    private void setXMLSaxName() {//####[129]####
+    }//####[131]####
+//####[133]####
+    public static void setupBenchmark() {//####[133]####
+        String tmpName = Util.getProperty(Constants.XML_TRANSFORM_OUT_DIR_PROP, null);//####[134]####
+        OUT_DIR = tmpName != null ? tmpName : OUT_DIR;//####[135]####
+        File file = new File(OUT_DIR);//####[136]####
+        validationFileName = getFullName(Main.class, null, CONTROL_FILE_NAME);//####[137]####
+        xmlInput = new FileCache.CachedFile[INPUT_PAIR];//####[138]####
+        xslInput = new FileCache.CachedFile[INPUT_PAIR];//####[139]####
+        for (int i = 0; i < INPUT_PAIR; i++) //####[140]####
+        {//####[140]####
+            xmlInput[i] = getCachedFile(Main.class, null, XML_NAMES[i]);//####[141]####
+            xslInput[i] = getCachedFile(Main.class, null, XSL_NAMES[i]);//####[142]####
+        }//####[143]####
+        longValidationProperties = new Properties();//####[145]####
+        try {//####[146]####
+            if (!file.exists()) //####[147]####
+            {//####[147]####
+                file.mkdir();//####[148]####
+            }//####[149]####
+            longValidationProperties.load(new FileInputStream(validationFileName));//####[150]####
+        } catch (IOException e) {//####[151]####
+            e.printStackTrace();//####[152]####
+        }//####[153]####
+        setupTransformers();//####[155]####
+        setValidationMode(LONG_VALIDATION_MODE);//####[157]####
+        setLoopMode(SINGLE_LOOP_MODE);//####[158]####
+        Main main = new Main(new BenchmarkResult(), 1);//####[159]####
+        main.harnessMain();//####[160]####
+        int threads = Launch.currentNumberBmThreads;//####[161]####
+        shortValidationProperties = new Properties[Launch.currentNumberBmThreads];//####[162]####
+        Properties outProperties = main.getOutProperties();//####[163]####
+        for (int i = 0; i < threads; i++) //####[164]####
+        {//####[164]####
+            shortValidationProperties[i] = (Properties) outProperties.clone();//####[165]####
+        }//####[166]####
+        setValidationMode(SHORT_VALIDATION_MODE);//####[167]####
+        setLoopMode(MULTIPLE_LOOP_MODE);//####[168]####
+    }//####[169]####
+//####[171]####
+    public static void tearDownBenchmark() {//####[171]####
+        if (!ExtOutputStream.wasFullVerificationError && !Util.getBoolProperty(Constants.XML_TRANSFORM_LEAVE_OUT_DIR_PROP, null)) //####[172]####
+        {//####[173]####
+            remove(new File(OUT_DIR));//####[174]####
+        }//####[175]####
+    }//####[176]####
+//####[179]####
+    private static void setupTransformers() {//####[179]####
+        allTransformers = new Transformer[Launch.currentNumberBmThreads][INPUT_PAIR];//####[180]####
+        try {//####[181]####
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();//####[182]####
+            for (int i = 0; i < INPUT_PAIR; i++) //####[183]####
+            {//####[183]####
+                Templates precompiledTemplates = transformerFactory.newTemplates(xslInput[i].asNewStreamSource());//####[184]####
+                for (int j = 0; j < Launch.currentNumberBmThreads; j++) //####[186]####
+                {//####[186]####
+                    allTransformers[j][i] = precompiledTemplates.newTransformer();//####[187]####
+                }//####[188]####
+            }//####[189]####
+        } catch (TransformerConfigurationException e) {//####[191]####
+            e.printStackTrace();//####[192]####
+        } catch (IOException e) {//####[193]####
+            e.printStackTrace();//####[194]####
+        }//####[195]####
+    }//####[196]####
+//####[198]####
+    private Transformer[] precompiledTransformers;//####[198]####
+//####[199]####
+    private BaseOutputStream outputStream;//####[199]####
+//####[200]####
+    private StreamResult streamResult;//####[200]####
+//####[202]####
+    public Main(BenchmarkResult bmResult, int threadId) {//####[202]####
+        super(bmResult, threadId);//####[203]####
+        if (getValidationMode() == LONG_VALIDATION_MODE) //####[204]####
+        {//####[204]####
+            setOutputStream(new ExtOutputStream());//####[205]####
+            setValidationProperties(longValidationProperties);//####[206]####
+        } else {//####[207]####
+            setOutputStream(new BaseOutputStream());//####[208]####
+            setValidationProperties(shortValidationProperties[threadId - 1]);//####[209]####
+        }//####[210]####
+        precompiledTransformers = allTransformers[threadId - 1];//####[212]####
+    }//####[213]####
+//####[215]####
+    public void harnessMain() {//####[215]####
+        try {//####[216]####
+            long start = System.currentTimeMillis();//####[217]####
+            executeWorkload();//####[223]####
+            long time = System.currentTimeMillis() - start;//####[230]####
+            System.out.println("Parallel xml transform has taken  " + (time / 1000.0) + " seconds.");//####[231]####
+        } catch (Exception e) {//####[232]####
+            e.printStackTrace(Context.getOut());//####[233]####
+        }//####[234]####
+    }//####[235]####
+//####[237]####
+    public void setOutputStream(BaseOutputStream stream) {//####[237]####
+        outputStream = stream;//####[238]####
+        streamResult = new StreamResult(outputStream);//####[239]####
+    }//####[240]####
+//####[242]####
+    public static void main(String[] args) throws Exception {//####[242]####
+        runSimple(Main.class, args);//####[243]####
+    }//####[244]####
+//####[246]####
+    private void setValidationProperties(Properties props) {//####[246]####
+        outputStream.setValidationProperties(props);//####[247]####
+    }//####[248]####
+//####[250]####
+    private Properties getOutProperties() {//####[250]####
+        if (outputStream instanceof ExtOutputStream) //####[251]####
+        {//####[251]####
+            return ((ExtOutputStream) outputStream).getOutProperties();//####[252]####
+        }//####[253]####
+        return null;//####[254]####
+    }//####[255]####
+//####[257]####
+    private void executeWorkload() throws TransformerException, ParserConfigurationException, SAXException, IOException {//####[258]####
+        TaskIDGroup g;//####[260]####
+        g = new TaskIDGroup(INPUT_PAIR);//####[261]####
+        for (int i = 0; i < INPUT_PAIR; i++) //####[262]####
+        {//####[262]####
+            String propertyNamePrefix = XML_NAMES[i] + ".";//####[263]####
+            int loops = (getLoopMode() == SINGLE_LOOP_MODE) ? 1 : Main.loops[i];//####[264]####
+            Transformer transformer = precompiledTransformers[i];//####[268]####
+            TaskID id = doTransform(loops, xmlInput[i], transformer, propertyNamePrefix);//####[272]####
+            g.add(id);//####[273]####
+        }//####[275]####
+        try {//####[276]####
+            g.waitTillFinished();//####[277]####
+        } catch (Exception e) {//####[278]####
+            e.printStackTrace();//####[279]####
+        }//####[280]####
+    }//####[281]####
+//####[283]####
+    private static volatile Method __pt__doTransform_int_CachedFile_Transformer_String_method = null;//####[283]####
+    private synchronized static void __pt__doTransform_int_CachedFile_Transformer_String_ensureMethodVarSet() {//####[283]####
+        if (__pt__doTransform_int_CachedFile_Transformer_String_method == null) {//####[283]####
+            try {//####[283]####
+                __pt__doTransform_int_CachedFile_Transformer_String_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__doTransform", new Class[] {//####[283]####
+                    int.class, CachedFile.class, Transformer.class, String.class//####[283]####
+                });//####[283]####
+            } catch (Exception e) {//####[283]####
+                e.printStackTrace();//####[283]####
+            }//####[283]####
+        }//####[283]####
+    }//####[283]####
+    private TaskID<Void> doTransform(Object loops, Object xmlInput, Object transformer, Object propertyNamePrefix) throws TransformerException, ParserConfigurationException, SAXException, IOException {//####[284]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[284]####
+        return doTransform(loops, xmlInput, transformer, propertyNamePrefix, new TaskInfo());//####[284]####
+    }//####[284]####
+    private TaskID<Void> doTransform(Object loops, Object xmlInput, Object transformer, Object propertyNamePrefix, TaskInfo taskinfo) throws TransformerException, ParserConfigurationException, SAXException, IOException {//####[284]####
+        // ensure Method variable is set//####[284]####
+        if (__pt__doTransform_int_CachedFile_Transformer_String_method == null) {//####[284]####
+            __pt__doTransform_int_CachedFile_Transformer_String_ensureMethodVarSet();//####[284]####
+        }//####[284]####
+        List<Integer> __pt__taskIdIndexList = new ArrayList<Integer>();//####[284]####
+        List<Integer> __pt__queueIndexList = new ArrayList<Integer>();//####[284]####
+        if (loops instanceof BlockingQueue) {//####[284]####
+            __pt__queueIndexList.add(0);//####[284]####
+        }//####[284]####
+        if (loops instanceof TaskID) {//####[284]####
+            taskinfo.addDependsOn((TaskID)loops);//####[284]####
+            __pt__taskIdIndexList.add(0);//####[284]####
+        }//####[284]####
+        if (xmlInput instanceof BlockingQueue) {//####[284]####
+            __pt__queueIndexList.add(1);//####[284]####
+        }//####[284]####
+        if (xmlInput instanceof TaskID) {//####[284]####
+            taskinfo.addDependsOn((TaskID)xmlInput);//####[284]####
+            __pt__taskIdIndexList.add(1);//####[284]####
+        }//####[284]####
+        if (transformer instanceof BlockingQueue) {//####[284]####
+            __pt__queueIndexList.add(2);//####[284]####
+        }//####[284]####
+        if (transformer instanceof TaskID) {//####[284]####
+            taskinfo.addDependsOn((TaskID)transformer);//####[284]####
+            __pt__taskIdIndexList.add(2);//####[284]####
+        }//####[284]####
+        if (propertyNamePrefix instanceof BlockingQueue) {//####[284]####
+            __pt__queueIndexList.add(3);//####[284]####
+        }//####[284]####
+        if (propertyNamePrefix instanceof TaskID) {//####[284]####
+            taskinfo.addDependsOn((TaskID)propertyNamePrefix);//####[284]####
+            __pt__taskIdIndexList.add(3);//####[284]####
+        }//####[284]####
+        int[] __pt__queueIndexArray = new int[__pt__queueIndexList.size()];//####[284]####
+        for (int __pt__i = 0; __pt__i < __pt__queueIndexArray.length; __pt__i++) {//####[284]####
+            __pt__queueIndexArray[__pt__i] = __pt__queueIndexList.get(__pt__i);//####[284]####
+        }//####[284]####
+        taskinfo.setQueueArgIndexes(__pt__queueIndexArray);//####[284]####
+        if (__pt__queueIndexArray.length > 0) {//####[284]####
+            taskinfo.setIsPipeline(true);//####[284]####
+        }//####[284]####
+        int[] __pt__taskIdIndexArray = new int[__pt__taskIdIndexList.size()];//####[284]####
+        for (int __pt__i = 0; __pt__i < __pt__taskIdIndexArray.length; __pt__i++) {//####[284]####
+            __pt__taskIdIndexArray[__pt__i] = __pt__taskIdIndexList.get(__pt__i);//####[284]####
+        }//####[284]####
+        taskinfo.setTaskIdArgIndexes(__pt__taskIdIndexArray);//####[284]####
+        taskinfo.setParameters(loops, xmlInput, transformer, propertyNamePrefix);//####[284]####
+        taskinfo.setMethod(__pt__doTransform_int_CachedFile_Transformer_String_method);//####[284]####
+        taskinfo.setInstance(this);//####[284]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[284]####
+    }//####[284]####
+    public void __pt__doTransform(int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix) throws TransformerException, ParserConfigurationException, SAXException, IOException {//####[284]####
+        Transformer[] transformerForEach = new Transformer[loops];//####[285]####
+        for (int i = loops - 1; i >= 0; i--) //####[286]####
+        {//####[286]####
+            transformerForEach[i] = transformer;//####[287]####
+        }//####[288]####
+        for (int j = loops - 1; j >= 0; j--) //####[296]####
+        {//####[296]####
+            transform(transformerForEach[j], createSaxSource(xmlInput), propertyNamePrefix + j + "SAX", j);//####[297]####
+        }//####[300]####
+    }//####[301]####
+//####[301]####
+//####[303]####
+    private void transform(Transformer transformer, Source source, String descr, int loop) throws TransformerException, ParserConfigurationException, SAXException, IOException {//####[304]####
+        transformer.reset();//####[305]####
+        outputStream.setCurrentProp(descr);//####[307]####
+        transformer.transform(source, streamResult);//####[308]####
+        outputStream.checkResult(loop);//####[309]####
+    }//####[312]####
+}//####[312]####

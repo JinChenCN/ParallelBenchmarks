@@ -18,6 +18,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.dom.DOMSource;
 import org.xml.sax.SAXException;
 
 import spec.benchmarks.xml.pt.XMLBenchmark;
@@ -30,7 +32,6 @@ import spec.io.FileCache;
 import java.util.Properties;
 import spec.io.FileCache.CachedFile;
 
-
 public class Main extends XMLBenchmark {
     private static final int LONG_VALIDATION_MODE = 0;
     private static final int SHORT_VALIDATION_MODE = 1;
@@ -39,6 +40,7 @@ public class Main extends XMLBenchmark {
     private static final int INPUT_PAIR = 10;
     private static final String CONTROL_FILE_NAME = "transformations.properties";
     static String OUT_DIR = "xml_out";
+    private static int THREADSNUM = 10;
 
     private static final String[] XML_NAMES = {
         "chess-fo/Kasparov-Karpov.xml",
@@ -102,9 +104,10 @@ public class Main extends XMLBenchmark {
     private static int validationMode = LONG_VALIDATION_MODE;
     private static int loopMode = SINGLE_LOOP_MODE;
     private static Properties longValidationProperties;
-    private static Properties[] shortValidationProperties;
+    private static Properties[][][] shortValidationProperties;
     private static String validationFileName;
-    private static Transformer[][] allTransformers;
+    private static Transformer[][][] allTransformers;
+    private int threadId;
     
     private static void setValidationMode(int mode) {
         validationMode = mode;
@@ -126,6 +129,10 @@ public class Main extends XMLBenchmark {
         return MULTI;
     }
     
+    private void setXMLSaxName(){
+    	
+    }
+    
     public static void setupBenchmark() {
         String tmpName = Util.getProperty(Constants.XML_TRANSFORM_OUT_DIR_PROP, null);
         OUT_DIR = tmpName != null ? tmpName : OUT_DIR;
@@ -137,6 +144,7 @@ public class Main extends XMLBenchmark {
             xmlInput[i] = getCachedFile(Main.class, null, XML_NAMES[i]);
             xslInput[i] = getCachedFile(Main.class, null, XSL_NAMES[i]);
         }
+        
         longValidationProperties = new Properties();
         try {
             if (!file.exists()) {
@@ -151,14 +159,16 @@ public class Main extends XMLBenchmark {
         
         setValidationMode(LONG_VALIDATION_MODE);
         setLoopMode(SINGLE_LOOP_MODE);
+        
+        shortValidationProperties = new Properties[Launch.currentNumberBmThreads][INPUT_PAIR][3];
+        
         Main main = new Main(new BenchmarkResult(), 1);
         main.harnessMain();
         int threads = Launch.currentNumberBmThreads;
-        shortValidationProperties = new Properties[Launch.currentNumberBmThreads];
-        Properties outProperties = main.getOutProperties();
-        for (int i = 0; i < threads; i ++) {
-            shortValidationProperties[i] = (Properties)outProperties.clone();
-        }
+//        Properties outProperties = main.getOutProperties();
+//        for (int i = 0; i < threads; i ++) {
+//            shortValidationProperties[i] = (Properties)outProperties.clone();
+//        }
         setValidationMode(SHORT_VALIDATION_MODE);
         setLoopMode(MULTIPLE_LOOP_MODE);
     }
@@ -172,16 +182,21 @@ public class Main extends XMLBenchmark {
     
     
     private static void setupTransformers() {
-        allTransformers = new Transformer[Launch.currentNumberBmThreads][INPUT_PAIR];
+        allTransformers = new Transformer[Launch.currentNumberBmThreads][INPUT_PAIR][];
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             for (int i = 0; i < INPUT_PAIR; i ++) {
                 Templates precompiledTemplates =
                         transformerFactory.newTemplates(xslInput[i].asNewStreamSource());
                 for (int j = 0; j < Launch.currentNumberBmThreads; j ++) {
-                    allTransformers[j][i] = precompiledTemplates.newTransformer();
+                	Transformer[] transformerForLoops = new Transformer[THREADSNUM];
+                	for (int k=0; k<THREADSNUM; k++) {
+                		transformerForLoops[k]=precompiledTemplates.newTransformer();
+                	}
+                    allTransformers[j][i] = transformerForLoops;
                 }
             }
+            
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -189,26 +204,27 @@ public class Main extends XMLBenchmark {
         }
     }
     
-    private Transformer[] precompiledTransformers;
-    private BaseOutputStream outputStream;
+    private Transformer[][] precompiledTransformers;
+   // private BaseOutputStream outputStream;
     private StreamResult streamResult;
     
     public Main(BenchmarkResult bmResult, int threadId) {
         super(bmResult, threadId);
-        if (getValidationMode() == LONG_VALIDATION_MODE) {
-            setOutputStream(new ExtOutputStream());
-            setValidationProperties(longValidationProperties);
-        } else {
-            setOutputStream(new BaseOutputStream());
-            setValidationProperties(shortValidationProperties[threadId - 1]);
-        }
+        this.threadId = threadId;
+//        if (getValidationMode() == LONG_VALIDATION_MODE) {
+//            setOutputStream(new ExtOutputStream());
+//            setValidationProperties(longValidationProperties);
+//        } else {
+//            setOutputStream(new BaseOutputStream());
+//            setValidationProperties(shortValidationProperties[threadId - 1]);
+//        }
+
         
         precompiledTransformers = allTransformers[threadId - 1];
     }
     
     public void harnessMain() {
         try {
-            long start = System.currentTimeMillis();
 //        	TaskIDGroup g;
 //        	g = new TaskIDGroup(3);
             for (int i = 0; i < 3; i++) {
@@ -221,27 +237,29 @@ public class Main extends XMLBenchmark {
 //    		} catch (Exception e) {
 //    			e.printStackTrace();
 //    		}
-            long time = System.currentTimeMillis() - start;
-            System.out.println("Parallel xml transform has taken  " + (time / 1000.0) + " seconds.");
+
         } catch (Exception e) {
             e.printStackTrace(Context.getOut());
         }
     }
     
-    public void setOutputStream(BaseOutputStream stream) {
-        outputStream = stream;
-        streamResult = new StreamResult(outputStream);
-    }
+//    public void setOutputStream(BaseOutputStream stream) {
+//        outputStream = stream;
+//        streamResult = new StreamResult(outputStream);
+//    }
     
     public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
         runSimple( Main.class, args );
+        long time = System.currentTimeMillis() - start;
+        System.out.println("Parallel xml transform has taken  " + (time / 1000.0) + " seconds.");
     }
     
-    private void setValidationProperties(Properties props) {
-        outputStream.setValidationProperties(props);
-    }
+//    private void setValidationProperties(Properties props) {
+//        outputStream.setValidationProperties(props);
+//    }
     
-    private Properties getOutProperties() {
+    private Properties getOutProperties(BaseOutputStream outputStream) {
         if (outputStream instanceof ExtOutputStream) {
             return ((ExtOutputStream)outputStream).getOutProperties();
         }
@@ -259,11 +277,11 @@ public class Main extends XMLBenchmark {
             
             //An object of Transformer class may not be used in multiple threads running concurrently. 
             //Different Transformers may be used concurrently by different threads.
-            Transformer transformer = precompiledTransformers[i];
+            Transformer[] transformer = precompiledTransformers[i];
             
             //doTransform(loops, xmlInput[i], transformer, propertyNamePrefix);
             
-        	TaskID id = doTransform(loops, xmlInput[i], transformer, propertyNamePrefix);
+        	TaskID id = doTransform(loops, xmlInput[i], transformer[i], propertyNamePrefix, i);
     		g.add(id); 
     		
         }
@@ -274,27 +292,77 @@ public class Main extends XMLBenchmark {
 		}
     }
     
-    TASK private void doTransform(int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix) throws
+    TASK private void doTransform(int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws
     TransformerException, ParserConfigurationException, SAXException, IOException {
-    	Transformer[] transformerForEach = new Transformer[loops];
-    	for (int i = loops - 1; i >= 0; i--) {
-    		transformerForEach[i] = transformer;
-    	}
-        for (int j = loops - 1; j >= 0; j--) {
-            transform(transformerForEach[j], createSaxSource(xmlInput), propertyNamePrefix + j + "SAX", j);
-            //transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j);
-            //transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j);
-        }
+
+//      	if(loops < THREADSNUM) {
+            for (int j = loops - 1; j >= 0; j--) {
+                transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
+                transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
+                transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
+            }
+//      	} 
+//      	else {
+//        	TaskIDGroup g;
+//        	g = new TaskIDGroup(THREADSNUM);
+//        	int[] loopsForThread = new int[THREADSNUM];
+//        	for(int i=0; i<THREADSNUM-1; i++)
+//        	{
+//        		loopsForThread[i] = loops/THREADSNUM;
+//        	}
+//        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+//        	
+//        	for (int j = 0; j < THREADSNUM; j++)
+//        	{
+//        		TaskID id = doTransformTask(loopsForThread[j], xmlInput, transformer[j], propertyNamePrefix,INPUT_PAIR_num );
+//        	 	g.add(id);
+//        	}
+//            try {
+//    			g.waitTillFinished();
+//    		} catch (Exception e) {
+//    			e.printStackTrace();
+//        	}
+//      	}
     }
     
-    private void transform(Transformer transformer, Source source, String descr, int loop) throws
+    TASK private void doTransformTask (int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws
+    TransformerException, ParserConfigurationException, SAXException, IOException {
+    	 for (int j = loops - 1; j >= 0; j--) {   		 
+             transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
+             transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
+             transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
+         }
+    }
+    
+    private void transform(Transformer transformer, Source source, String descr, int loop, int INPUT_PAIR_num) throws
             TransformerException, ParserConfigurationException, SAXException, IOException {
         transformer.reset();
-       // synchronized(this) {
+        BaseOutputStream outputStream;
+        StreamResult streamResult;
+        
+        int sourceType = source instanceof SAXSource ? 0 : (source instanceof DOMSource ? 1 : 2);
+        
+        if (getValidationMode() == LONG_VALIDATION_MODE) {           
+            outputStream = new ExtOutputStream();
+            streamResult = new StreamResult(outputStream);
+            outputStream.setValidationProperties(longValidationProperties);
+        } else {
+            outputStream = new BaseOutputStream();
+            streamResult = new StreamResult(outputStream);
+            outputStream.setValidationProperties(shortValidationProperties[threadId - 1][INPUT_PAIR_num][sourceType]);
+        }
+        
         outputStream.setCurrentProp(descr);
         transformer.transform(source, streamResult);
         outputStream.checkResult(loop);
-       // }
+        
+        if ((getValidationMode() == LONG_VALIDATION_MODE) && (outputStream instanceof ExtOutputStream) ) {
+            int threads = Launch.currentNumberBmThreads;
+	        Properties outProperties = getOutProperties(outputStream);
+	        for (int i = 0; i < threads; i ++) {   		  
+	          shortValidationProperties[i][INPUT_PAIR_num][sourceType] = (Properties)outProperties.clone();
+	      }
+        }
 
     }
 }
