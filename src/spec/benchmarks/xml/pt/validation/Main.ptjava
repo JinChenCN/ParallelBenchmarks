@@ -36,27 +36,28 @@ public class Main extends XMLBenchmark {
     private static FileCache.CachedFile[] allInstanceBytes;
     private static FileCache.CachedFile[] allSchemaBytes;
     private static Validator[][][] allValidators;
-    private static int THREADSNUM = 6;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
+    private static int THREADSNUM = 4;
+    private static int CHUNCK_NUM = 4;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
 
     public static String testType() {
         return MULTI;
     }
     private static String[] schemaNames = {
-        "validation_input.xsd",
-        "periodic_table.xsd",
-        "play.xsd",
-        "structure.xsd",
-        "po.xsd",
-        "personal.xsd",
+            "validation_input.xsd",
+            "periodic_table.xsd",
+            "play.xsd",
+            "structure.xsd",
+            "po.xsd",
+            "personal.xsd",
     };
     private static String[] instanceNames = {
-        "validation_input.xml",
-        "periodicxsd.xml",
-        "much_adoxsd.xml",
-        "structure.xml",
-        "po.xml",
-        "personal.xml",
+            "validation_input.xml",
+            "periodicxsd.xml",
+            "much_adoxsd.xml",
+            "structure.xml",
+            "po.xml",
+            "personal.xml",
     };
     /*
     Loops numbers are inversely proportional to xml file size
@@ -69,14 +70,13 @@ public class Main extends XMLBenchmark {
     "personal.xml"			1482			419
      */
     private static int loops[] = {
-        1,
-        5,
-        3,
-        52,
-        647,
-        419
+            1,
+            5,
+            3,
+            52,
+            647,
+            419
         ,
-
            };
     
     public static void setupBenchmark() {
@@ -119,8 +119,8 @@ public class Main extends XMLBenchmark {
                     precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));
                 }
                 for (int j = 0; j < threads; j++) {   
-                    Validator[] validatorForLoops = new Validator[THREADSNUM];
-                	for (int k=0; k<THREADSNUM; k++) {
+                    Validator[] validatorForLoops = new Validator[CHUNCK_NUM];
+                	for (int k=0; k<CHUNCK_NUM; k++) {
                 		validatorForLoops[k]=precompSchema.newValidator();
                 	}
                 	allValidators[j][i] = validatorForLoops;
@@ -152,6 +152,7 @@ public class Main extends XMLBenchmark {
     }
 
     public static void main(String[] args) throws Exception {
+        ParaTask.init();
         runSimple(Main.class, args);
     }
 
@@ -166,7 +167,7 @@ public class Main extends XMLBenchmark {
 
         for (int i = 0; i < XSD_NUMBER; i++) {
             Context.getOut().println("Validating " + instanceNames[i]);
-
+            //System.out.println("pool size is " + ParaTask.getThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF));
             //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
         	TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
     		g.add(id);            
@@ -189,15 +190,15 @@ public class Main extends XMLBenchmark {
             }
     	} else {
         	TaskIDGroup g;
-        	g = new TaskIDGroup(THREADSNUM);
-        	int[] loopsForThread = new int[THREADSNUM];
-        	for(int i=0; i<THREADSNUM-1; i++)
+        	g = new TaskIDGroup(CHUNCK_NUM);
+        	int[] loopsForThread = new int[CHUNCK_NUM];
+        	for(int i=0; i<CHUNCK_NUM-1; i++)
         	{
-        		loopsForThread[i] = loops/THREADSNUM;
+        		loopsForThread[i] = loops/CHUNCK_NUM;
         	}
-        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+        	loopsForThread[CHUNCK_NUM-1] = loops - (CHUNCK_NUM-1) * loops/CHUNCK_NUM;
         	
-        	for (int j = 0; j < THREADSNUM; j++)
+        	for (int j = 0; j < CHUNCK_NUM; j++)
         	{
             	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
             	g.add(id);

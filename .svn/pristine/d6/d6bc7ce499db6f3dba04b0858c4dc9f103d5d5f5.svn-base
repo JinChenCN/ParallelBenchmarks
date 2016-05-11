@@ -41,7 +41,7 @@ public class Main extends XMLBenchmark {
     private static final String CONTROL_FILE_NAME = "transformations.properties";
     static String OUT_DIR = "xml_out";
     private static int THREADSNUM = 10;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
 
     private static final String[] XML_NAMES = {
         "chess-fo/Kasparov-Karpov.xml",
@@ -128,6 +128,10 @@ public class Main extends XMLBenchmark {
     
     public static String testType() {
         return MULTI;
+    }
+    
+    private void setXMLSaxName(){
+    	
     }
     
     public static void setupBenchmark() {

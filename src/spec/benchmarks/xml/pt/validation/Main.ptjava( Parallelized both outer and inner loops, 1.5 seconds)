@@ -152,6 +152,7 @@ public class Main extends XMLBenchmark {
     }
 
     public static void main(String[] args) throws Exception {
+        ParaTask.init();
         runSimple(Main.class, args);
     }
 

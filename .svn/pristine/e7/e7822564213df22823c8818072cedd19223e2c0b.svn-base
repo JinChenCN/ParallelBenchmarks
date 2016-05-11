@@ -36,8 +36,9 @@ public class Main extends XMLBenchmark {
     private static FileCache.CachedFile[] allInstanceBytes;
     private static FileCache.CachedFile[] allSchemaBytes;
     private static Validator[][][] allValidators;
-    private static int THREADSNUM = 6;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
+    private static int THREADSNUM = 4;
+    private static int CHUNCK_SIZE = 4;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
 
     public static String testType() {
         return MULTI;
@@ -119,8 +120,8 @@ public class Main extends XMLBenchmark {
                     precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));
                 }
                 for (int j = 0; j < threads; j++) {   
-                    Validator[] validatorForLoops = new Validator[THREADSNUM];
-                	for (int k=0; k<THREADSNUM; k++) {
+                    Validator[] validatorForLoops = new Validator[CHUNCK_SIZE];
+                	for (int k=0; k<CHUNCK_SIZE; k++) {
                 		validatorForLoops[k]=precompSchema.newValidator();
                 	}
                 	allValidators[j][i] = validatorForLoops;
@@ -167,7 +168,7 @@ public class Main extends XMLBenchmark {
 
         for (int i = 0; i < XSD_NUMBER; i++) {
             Context.getOut().println("Validating " + instanceNames[i]);
-
+            //System.out.println("pool size is " + ParaTask.getThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF));
             //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
         	TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
     		g.add(id);            
@@ -190,15 +191,15 @@ public class Main extends XMLBenchmark {
             }
     	} else {
         	TaskIDGroup g;
-        	g = new TaskIDGroup(THREADSNUM);
-        	int[] loopsForThread = new int[THREADSNUM];
-        	for(int i=0; i<THREADSNUM-1; i++)
+        	g = new TaskIDGroup(CHUNCK_SIZE);
+        	int[] loopsForThread = new int[CHUNCK_SIZE];
+        	for(int i=0; i<CHUNCK_SIZE-1; i++)
         	{
-        		loopsForThread[i] = loops/THREADSNUM;
+        		loopsForThread[i] = loops/CHUNCK_SIZE;
         	}
-        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+        	loopsForThread[CHUNCK_SIZE-1] = loops - (CHUNCK_SIZE-1) * loops/CHUNCK_SIZE;
         	
-        	for (int j = 0; j < THREADSNUM; j++)
+        	for (int j = 0; j < CHUNCK_SIZE; j++)
         	{
             	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
             	g.add(id);

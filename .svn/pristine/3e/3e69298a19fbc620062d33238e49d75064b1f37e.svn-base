@@ -37,7 +37,7 @@ public class Main extends XMLBenchmark {
     private static FileCache.CachedFile[] allSchemaBytes;
     private static Validator[][][] allValidators;
     private static int THREADSNUM = 6;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
 
     public static String testType() {
         return MULTI;
@@ -167,7 +167,7 @@ public class Main extends XMLBenchmark {
 
         for (int i = 0; i < XSD_NUMBER; i++) {
             Context.getOut().println("Validating " + instanceNames[i]);
-
+            //System.out.println("pool size is " + ParaTask.getThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF));
             //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
         	TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
     		g.add(id);            

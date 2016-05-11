@@ -41,7 +41,7 @@ public class Main extends XMLBenchmark {
     private static final String CONTROL_FILE_NAME = "transformations.properties";
     static String OUT_DIR = "xml_out";
     private static int THREADSNUM = 10;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
 
     private static final String[] XML_NAMES = {
         "chess-fo/Kasparov-Karpov.xml",
@@ -107,7 +107,7 @@ public class Main extends XMLBenchmark {
     private static Properties longValidationProperties;
     private static Properties[][][] shortValidationProperties;
     private static String validationFileName;
-    private static Transformer[][] allTransformers;
+    private static Transformer[][][] allTransformers;
     private int threadId;
     
     private static void setValidationMode(int mode) {
@@ -128,6 +128,10 @@ public class Main extends XMLBenchmark {
     
     public static String testType() {
         return MULTI;
+    }
+    
+    private void setXMLSaxName(){
+    	
     }
     
     public static void setupBenchmark() {
@@ -179,14 +183,18 @@ public class Main extends XMLBenchmark {
     
     
     private static void setupTransformers() {
-        allTransformers = new Transformer[Launch.currentNumberBmThreads][INPUT_PAIR];
+        allTransformers = new Transformer[Launch.currentNumberBmThreads][INPUT_PAIR][];
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             for (int i = 0; i < INPUT_PAIR; i ++) {
                 Templates precompiledTemplates =
                         transformerFactory.newTemplates(xslInput[i].asNewStreamSource());
                 for (int j = 0; j < Launch.currentNumberBmThreads; j ++) {
-                    allTransformers[j][i] = precompiledTemplates.newTransformer();
+                	Transformer[] transformerForLoops = new Transformer[THREADSNUM];
+                	for (int k=0; k<THREADSNUM; k++) {
+                		transformerForLoops[k]=precompiledTemplates.newTransformer();
+                	}
+                    allTransformers[j][i] = transformerForLoops;
                 }
             }
             
@@ -197,7 +205,7 @@ public class Main extends XMLBenchmark {
         }
     }
     
-    private Transformer[] precompiledTransformers;
+    private Transformer[][] precompiledTransformers;
    // private BaseOutputStream outputStream;
     private StreamResult streamResult;
     
@@ -274,11 +282,11 @@ public class Main extends XMLBenchmark {
             
             //An object of Transformer class may not be used in multiple threads running concurrently. 
             //Different Transformers may be used concurrently by different threads.
-            Transformer transformer = precompiledTransformers[i];
+            Transformer[] transformer = precompiledTransformers[i];
             
             //doTransform(loops, xmlInput[i], transformer, propertyNamePrefix);
             
-        	TaskID id = doTransform(loops, xmlInput[i], transformer, propertyNamePrefix, i);
+        	TaskID id = doTransform(loops, xmlInput[i], transformer[i], propertyNamePrefix, i);
     		g.add(id); 
     		
         }

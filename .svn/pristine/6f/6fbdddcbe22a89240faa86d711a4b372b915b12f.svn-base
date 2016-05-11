@@ -50,21 +50,19 @@ public class Main extends XMLBenchmark {//####[33]####
 //####[38]####
     private static Validator[][][] allValidators;//####[38]####
 //####[39]####
-    private static int THREADSNUM = 4;//####[39]####
+    private static int THREADSNUM = 6;//####[39]####
 //####[40]####
-    private static int CHUNCK_NUM = 4;//####[40]####
-//####[41]####
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;//####[41]####
-//####[43]####
-    public static String testType() {//####[43]####
-        return MULTI;//####[44]####
-    }//####[45]####
-//####[46]####
-    private static String[] schemaNames = { "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd" };//####[46]####
-//####[54]####
-    private static String[] instanceNames = { "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml" };//####[54]####
-//####[72]####
-    private static int loops[] = { 1, 5, 3, 52, 647, 419 };//####[72]####
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;//####[40]####
+//####[42]####
+    public static String testType() {//####[42]####
+        return MULTI;//####[43]####
+    }//####[44]####
+//####[45]####
+    private static String[] schemaNames = { "validation_input.xsd", "periodic_table.xsd", "play.xsd", "structure.xsd", "po.xsd", "personal.xsd" };//####[45]####
+//####[53]####
+    private static String[] instanceNames = { "validation_input.xml", "periodicxsd.xml", "much_adoxsd.xml", "structure.xml", "po.xml", "personal.xml" };//####[53]####
+//####[71]####
+    private static int loops[] = { 1, 5, 3, 52, 647, 419 };//####[71]####
 //####[82]####
     public static void setupBenchmark() {//####[82]####
         String dirName = Util.getProperty(Constants.XML_VALIDATION_INPUT_DIR_PROP, null);//####[83]####
@@ -109,8 +107,8 @@ public class Main extends XMLBenchmark {//####[33]####
                 }//####[120]####
                 for (int j = 0; j < threads; j++) //####[121]####
                 {//####[121]####
-                    Validator[] validatorForLoops = new Validator[CHUNCK_NUM];//####[122]####
-                    for (int k = 0; k < CHUNCK_NUM; k++) //####[123]####
+                    Validator[] validatorForLoops = new Validator[THREADSNUM];//####[122]####
+                    for (int k = 0; k < THREADSNUM; k++) //####[123]####
                     {//####[123]####
                         validatorForLoops[k] = precompSchema.newValidator();//####[124]####
                     }//####[125]####
@@ -649,14 +647,14 @@ public class Main extends XMLBenchmark {//####[33]####
             }//####[190]####
         } else {//####[191]####
             TaskIDGroup g;//####[192]####
-            g = new TaskIDGroup(CHUNCK_NUM);//####[193]####
-            int[] loopsForThread = new int[CHUNCK_NUM];//####[194]####
-            for (int i = 0; i < CHUNCK_NUM - 1; i++) //####[195]####
+            g = new TaskIDGroup(THREADSNUM);//####[193]####
+            int[] loopsForThread = new int[THREADSNUM];//####[194]####
+            for (int i = 0; i < THREADSNUM - 1; i++) //####[195]####
             {//####[196]####
-                loopsForThread[i] = loops / CHUNCK_NUM;//####[197]####
+                loopsForThread[i] = loops / THREADSNUM;//####[197]####
             }//####[198]####
-            loopsForThread[CHUNCK_NUM - 1] = loops - (CHUNCK_NUM - 1) * loops / CHUNCK_NUM;//####[199]####
-            for (int j = 0; j < CHUNCK_NUM; j++) //####[201]####
+            loopsForThread[THREADSNUM - 1] = loops - (THREADSNUM - 1) * loops / THREADSNUM;//####[199]####
+            for (int j = 0; j < THREADSNUM; j++) //####[201]####
             {//####[202]####
                 TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);//####[203]####
                 g.add(id);//####[204]####
