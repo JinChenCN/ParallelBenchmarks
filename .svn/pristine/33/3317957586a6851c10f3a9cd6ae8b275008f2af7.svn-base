@@ -218,14 +218,28 @@ public class Main extends XMLBenchmark {
     
     public void harnessMain() {
         try {
-            for (int i = 0; i < 3; i++) { 
+//        	TaskIDGroup g;
+//        	g = new TaskIDGroup(3);
+            for (int i = 0; i < 3; i++) {
+//            	TaskID id = executeWorkload();
+//        		g.add(id); 
                 executeWorkload();
             }
+//            try {
+//    			g.waitTillFinished();
+//    		} catch (Exception e) {
+//    			e.printStackTrace();
+//    		}
 
         } catch (Exception e) {
             e.printStackTrace(Context.getOut());
         }
     }
+    
+//    public void setOutputStream(BaseOutputStream stream) {
+//        outputStream = stream;
+//        streamResult = new StreamResult(outputStream);
+//    }
     
     public static void main(String[] args) throws Exception {
         long start = System.currentTimeMillis();
@@ -277,11 +291,35 @@ public class Main extends XMLBenchmark {
     
     TASK private void doTransform(int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws
     TransformerException, ParserConfigurationException, SAXException, IOException {
-        for (int j = loops - 1; j >= 0; j--) {
-            transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
-            transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
-            transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
-        }
+
+//      	if(loops < THREADSNUM) {
+            for (int j = loops - 1; j >= 0; j--) {
+                transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
+                transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
+                transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
+            }
+//      	} 
+//      	else {
+//        	TaskIDGroup g;
+//        	g = new TaskIDGroup(THREADSNUM);
+//        	int[] loopsForThread = new int[THREADSNUM];
+//        	for(int i=0; i<THREADSNUM-1; i++)
+//        	{
+//        		loopsForThread[i] = loops/THREADSNUM;
+//        	}
+//        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
+//        	
+//        	for (int j = 0; j < THREADSNUM; j++)
+//        	{
+//        		TaskID id = doTransformTask(loopsForThread[j], xmlInput, transformer[j], propertyNamePrefix,INPUT_PAIR_num );
+//        	 	g.add(id);
+//        	}
+//            try {
+//    			g.waitTillFinished();
+//    		} catch (Exception e) {
+//    			e.printStackTrace();
+//        	}
+//      	}
     }
     
     TASK private void doTransformTask (int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws

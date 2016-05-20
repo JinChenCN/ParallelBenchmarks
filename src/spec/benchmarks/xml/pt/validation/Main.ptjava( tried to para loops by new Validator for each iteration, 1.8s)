@@ -37,7 +37,7 @@ public class Main extends XMLBenchmark {
     private static FileCache.CachedFile[] allInstanceBytes;
     private static FileCache.CachedFile[] allSchemaBytes;
     private static Validator[][][] allValidators;
-    private static int THREADSNUM = 6;
+    private static int THREADSNUM = 4;
     private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
 
     public static String testType() {

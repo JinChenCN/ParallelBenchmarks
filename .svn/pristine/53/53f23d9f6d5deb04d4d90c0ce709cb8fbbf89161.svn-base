@@ -37,14 +37,13 @@ public class Main extends XMLBenchmark {
     private static FileCache.CachedFile[] allSchemaBytes;
     private static Validator[][][] allValidators;
     private static int THREADSNUM = 4;
-   //Note: CHUNK_NUM must be equal to or greater than THREADSNUM, or else there will be errors!
-    private static int CHUNK_NUM = 4;
-    //private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
+   //Note: CHUNCK_NUM must be greater than THREADSNUM, orelse there will be errors!
+    private static int CHUNCK_NUM = 4;
+    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
 
     public static String testType() {
         return MULTI;
     }
-    
     private static String[] schemaNames = {
             "validation_input.xsd",
             "periodic_table.xsd",
@@ -52,15 +51,14 @@ public class Main extends XMLBenchmark {
             "structure.xsd",
             "po.xsd",
             "personal.xsd",
-        };
-    
+    };
     private static String[] instanceNames = {
-        "validation_input.xml",
-        "periodicxsd.xml",
-        "much_adoxsd.xml",
-        "structure.xml",
-        "po.xml",
-        "personal.xml",
+            "validation_input.xml",
+            "periodicxsd.xml",
+            "much_adoxsd.xml",
+            "structure.xml",
+            "po.xml",
+            "personal.xml",
     };
     /*
     Loops numbers are inversely proportional to xml file size
@@ -73,14 +71,14 @@ public class Main extends XMLBenchmark {
     "personal.xml"			1482			419
      */
     private static int loops[] = {
-        1,
-        5,
-        3,
-        52,
-        647,
-        419
+            1,
+            5,
+            3,
+            52,
+            647,
+            419
         ,
-    };
+           };
     
     public static void setupBenchmark() {
         String dirName = Util.getProperty(Constants.XML_VALIDATION_INPUT_DIR_PROP, null);
@@ -122,8 +120,8 @@ public class Main extends XMLBenchmark {
                     precompSchema = sf.newSchema(new StreamSource(allSchemaBytes[i].getStream(), xsdFilename));
                 }
                 for (int j = 0; j < threads; j++) {   
-                    Validator[] validatorForLoops = new Validator[CHUNK_NUM];
-                	for (int k=0; k<CHUNK_NUM; k++) {
+                    Validator[] validatorForLoops = new Validator[CHUNCK_NUM];
+                	for (int k=0; k<CHUNCK_NUM; k++) {
                 		validatorForLoops[k]=precompSchema.newValidator();
                 	}
                 	allValidators[j][i] = validatorForLoops;
@@ -162,7 +160,7 @@ public class Main extends XMLBenchmark {
     private void executeWorkload() throws
             ParserConfigurationException, IOException, SAXException {
     	
-    	//ParaTask.setScheduling(scheduleType);
+    	ParaTask.setScheduling(scheduleType);
     	ParaTask.setThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF, THREADSNUM);
     	
     	TaskIDGroup g;
@@ -193,15 +191,15 @@ public class Main extends XMLBenchmark {
             }
     	} else {
         	TaskIDGroup g;
-        	g = new TaskIDGroup(CHUNK_NUM);
-        	int[] loopsForThread = new int[CHUNK_NUM];
-        	for(int i=0; i<CHUNK_NUM-1; i++)
+        	g = new TaskIDGroup(CHUNCK_NUM);
+        	int[] loopsForThread = new int[CHUNCK_NUM];
+        	for(int i=0; i<CHUNCK_NUM-1; i++)
         	{
-        		loopsForThread[i] = loops/CHUNK_NUM;
+        		loopsForThread[i] = loops/CHUNCK_NUM;
         	}
-        	loopsForThread[CHUNK_NUM-1] = loops - (CHUNK_NUM-1) * loops/CHUNK_NUM;
+        	loopsForThread[CHUNCK_NUM-1] = loops - (CHUNCK_NUM-1) * loops/CHUNCK_NUM;
         	
-        	for (int j = 0; j < CHUNK_NUM; j++)
+        	for (int j = 0; j < CHUNCK_NUM; j++)
         	{
             	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
             	g.add(id);

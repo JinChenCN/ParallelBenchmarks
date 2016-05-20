@@ -40,8 +40,8 @@ public class Main extends XMLBenchmark {
     private static final int INPUT_PAIR = 10;
     private static final String CONTROL_FILE_NAME = "transformations.properties";
     static String OUT_DIR = "xml_out";
-    private static int THREADSNUM = 10;
-    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.MixedSchedule;
+    private static int THREADSNUM = 4;
+//    private static ParaTask.ScheduleType scheduleType = ParaTask.ScheduleType.WorkSharing;
 
     private static final String[] XML_NAMES = {
         "chess-fo/Kasparov-Karpov.xml",
@@ -88,16 +88,16 @@ public class Main extends XMLBenchmark {
      Because of this loops number for these files are differs from table above (2, 3) instead of (0, 5).           
      */
     private static final int[] loops = {
-        2,
-        18,
-        31,        
-        34,
-        1,
-        10,
-        12,
-        3,
-        11,
-        23
+            2,
+            18,
+            31,        
+            34,
+            1,
+            10,
+            12,
+            3,
+            11,
+            23
     };
     
     private static FileCache.CachedFile[] xmlInput;
@@ -130,10 +130,6 @@ public class Main extends XMLBenchmark {
         return MULTI;
     }
     
-    private void setXMLSaxName(){
-    	
-    }
-    
     public static void setupBenchmark() {
         String tmpName = Util.getProperty(Constants.XML_TRANSFORM_OUT_DIR_PROP, null);
         OUT_DIR = tmpName != null ? tmpName : OUT_DIR;
@@ -161,7 +157,7 @@ public class Main extends XMLBenchmark {
         setValidationMode(LONG_VALIDATION_MODE);
         setLoopMode(SINGLE_LOOP_MODE);
         
-        shortValidationProperties = new Properties[Launch.currentNumberBmThreads][THREADSNUM][3];
+        shortValidationProperties = new Properties[Launch.currentNumberBmThreads][INPUT_PAIR][3];
         
         Main main = new Main(new BenchmarkResult(), 1);
         main.harnessMain();
@@ -222,28 +218,14 @@ public class Main extends XMLBenchmark {
     
     public void harnessMain() {
         try {
-//        	TaskIDGroup g;
-//        	g = new TaskIDGroup(3);
-            for (int i = 0; i < 3; i++) {
-//            	TaskID id = executeWorkload();
-//        		g.add(id); 
+            for (int i = 0; i < 3; i++) { 
                 executeWorkload();
             }
-//            try {
-//    			g.waitTillFinished();
-//    		} catch (Exception e) {
-//    			e.printStackTrace();
-//    		}
 
         } catch (Exception e) {
             e.printStackTrace(Context.getOut());
         }
     }
-    
-//    public void setOutputStream(BaseOutputStream stream) {
-//        outputStream = stream;
-//        streamResult = new StreamResult(outputStream);
-//    }
     
     public static void main(String[] args) throws Exception {
         long start = System.currentTimeMillis();
@@ -267,11 +249,11 @@ public class Main extends XMLBenchmark {
     private void executeWorkload() throws
     TransformerException, ParserConfigurationException, SAXException, IOException{
     	
-    	ParaTask.setScheduling(scheduleType);
+    	//ParaTask.setScheduling(scheduleType);
     	ParaTask.setThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF, THREADSNUM);
     	
     	TaskIDGroup g;
-    	g = new TaskIDGroup(THREADSNUM);
+    	g = new TaskIDGroup(INPUT_PAIR);
         for (int i = 0; i < INPUT_PAIR; i ++) {
             String propertyNamePrefix = XML_NAMES[i] + ".";
             int loops = (getLoopMode() == SINGLE_LOOP_MODE) ? 1 : Main.loops[i];
@@ -295,35 +277,11 @@ public class Main extends XMLBenchmark {
     
     TASK private void doTransform(int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws
     TransformerException, ParserConfigurationException, SAXException, IOException {
-
-//      	if(loops < THREADSNUM) {
-            for (int j = loops - 1; j >= 0; j--) {
-                transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
-                transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
-                transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
-            }
-//      	} 
-//      	else {
-//        	TaskIDGroup g;
-//        	g = new TaskIDGroup(THREADSNUM);
-//        	int[] loopsForThread = new int[THREADSNUM];
-//        	for(int i=0; i<THREADSNUM-1; i++)
-//        	{
-//        		loopsForThread[i] = loops/THREADSNUM;
-//        	}
-//        	loopsForThread[THREADSNUM-1] = loops - (THREADSNUM-1) * loops/THREADSNUM;
-//        	
-//        	for (int j = 0; j < THREADSNUM; j++)
-//        	{
-//        		TaskID id = doTransformTask(loopsForThread[j], xmlInput, transformer[j], propertyNamePrefix,INPUT_PAIR_num );
-//        	 	g.add(id);
-//        	}
-//            try {
-//    			g.waitTillFinished();
-//    		} catch (Exception e) {
-//    			e.printStackTrace();
-//        	}
-//      	}
+        for (int j = loops - 1; j >= 0; j--) {
+            transform(transformer, createSaxSource(xmlInput), propertyNamePrefix + "SAX", j, INPUT_PAIR_num);
+            transform(transformer, createDomSource(xmlInput), propertyNamePrefix + "DOM", j, INPUT_PAIR_num);
+            transform(transformer, xmlInput.asNewStreamSource(), propertyNamePrefix + "Stream", j, INPUT_PAIR_num);
+        }
     }
     
     TASK private void doTransformTask (int loops, CachedFile xmlInput, Transformer transformer, String propertyNamePrefix, int INPUT_PAIR_num) throws
