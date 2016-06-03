@@ -170,8 +170,6 @@ public class Main extends XMLBenchmark {
 
         for (int i = 0; i < XSD_NUMBER; i++) {
             Context.getOut().println("Validating " + instanceNames[i]);
-            //System.out.println("pool size is " + ParaTask.getThreadPoolSize(ParaTask.ThreadPoolType.ONEOFF));
-            //doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
         	TaskID id = doValidationTests(loops[i], allInstanceBytes[i], schemaBoundValidator[i]);
     		g.add(id);            
         }
@@ -205,13 +203,7 @@ public class Main extends XMLBenchmark {
         	{
             	TaskID id = doValidationLoop(loopsForThread[j], file, schemaValidator[j]);
             	g.add(id);
-        	}
-//            for (int i = loops/THREADSNUM; i >= 0; i--) {
-//            	TaskID id = validateSourceTask(i, file, schemaValidator[THREADSNUM-1]);
-//        		g.add(id); 
-//                //validateSource(i, createDomSource(file), schemaValidator[i]);
-//                //validateSource(i, createSaxSource(file), schemaValidator[i]);     	
-//            }            
+        	}           
             try {
     			g.waitTillFinished();
     		} catch (Exception e) {
@@ -227,8 +219,6 @@ public class Main extends XMLBenchmark {
 		validateSource(i, createDomSource(file), schemaValidator);
         validateSource(i, createSaxSource(file), schemaValidator); 
         }
-//        validateSource(loop, createDomSource(file), schemaValidator);
-//        validateSource(loop, createSaxSource(file), schemaValidator);
     }
  
     //Note: A validator object is not thread-safe and not reentrant. 
@@ -240,9 +230,9 @@ public class Main extends XMLBenchmark {
         schemaValidator.setErrorHandler(null);
         
         try {
-           // synchronized(this) { 
-            	schemaValidator.validate(source);
-           // }
+        	schemaValidator.validate(source);
+//I commented this print out because in parallel version this will be printed multiple times which make the comparison unfair.
+//Since we know the results are right if there is no exception or error, no need to print this out. 
 //            if (loop == 0) {
 //                Context.getOut().print("\tas " + source.getClass().getName());
 //                Context.getOut().println(" succeeded. (correct result)");
